@@ -1,0 +1,35 @@
+{
+  "@@locale": "en",
+  "appTitle": "Wedding Cards",
+  "@appTitle": {
+    "description": "The title of the application"
+  },
+  "welcomeBack": "Welcome back",
+  "totalSites": "Total Sites",
+  "totalViews": "Total Views",
+  "published": "Published",
+  "quickActions": "Quick Actions",
+  "createNew": "Create New",
+  "myWeddings": "My Weddings",
+  "recentWeddings": "Recent Weddings",
+  "noWeddingsCreated": "No weddings created yet.",
+  
+  "createWeddingTitle": "Create Wedding",
+  "groomName": "Groom Name",
+  "brideName": "Bride Name",
+  "weddingDate": "Wedding Date",
+  "weddingTime": "Wedding Time",
+  "venueName": "Venue Name",
+  "venueAddress": "Venue Address",
+  "mapLink": "Google Maps Link",
+  
+  "downloadPdf": "Download PDF",
+  "preview": "Preview",
+  "share": "Share",
+  "rsvps": "RSVPs",
+  "qrCode": "QR Code",
+  "edit": "Edit",
+  
+  "language": "Language",
+  "switchLanguage": "Switch to Malayalam"
+}

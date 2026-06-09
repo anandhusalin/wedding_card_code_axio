@@ -1,0 +1,32 @@
+{
+  "@@locale": "ml",
+  "appTitle": "വെഡ്ഡിംഗ് കാർഡ്സ്",
+  "welcomeBack": "സ്വാഗതം",
+  "totalSites": "ആകെ സൈറ്റുകൾ",
+  "totalViews": "ആകെ കാഴ്ചകൾ",
+  "published": "പ്രസിദ്ധീകരിച്ചു",
+  "quickActions": "വേഗത്തിലുള്ള പ്രവർത്തനങ്ങൾ",
+  "createNew": "പുതിയത് സൃഷ്ടിക്കുക",
+  "myWeddings": "എന്റെ കല്യാണങ്ങൾ",
+  "recentWeddings": "സമീപകാല കല്യാണങ്ങൾ",
+  "noWeddingsCreated": "ഇതുവരെ കല്യാണങ്ങൾ സൃഷ്ടിച്ചിട്ടില്ല.",
+  
+  "createWeddingTitle": "കല്യാണം സൃഷ്ടിക്കുക",
+  "groomName": "വരന്റെ പേര്",
+  "brideName": "വധുവിന്റെ പേര്",
+  "weddingDate": "വിവാഹ തീയതി",
+  "weddingTime": "വിവാഹ സമയം",
+  "venueName": "സ്ഥലത്തിന്റെ പേര്",
+  "venueAddress": "വിലാസം",
+  "mapLink": "ഗൂഗിൾ മാപ്സ് ലിങ്ക്",
+  
+  "downloadPdf": "PDF ഡൗൺലോഡ് ചെയ്യുക",
+  "preview": "പ്രിവ്യൂ",
+  "share": "പങ്കിടുക",
+  "rsvps": "അതിഥികൾ",
+  "qrCode": "ക്യുആർ കോഡ്",
+  "edit": "തിരുത്തുക",
+  
+  "language": "ഭാഷ",
+  "switchLanguage": "ഇംഗ്ലീഷിലേക്ക് മാറുക"
+}
