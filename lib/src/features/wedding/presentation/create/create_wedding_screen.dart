@@ -18,15 +18,20 @@ class CreateWeddingScreen extends ConsumerStatefulWidget {
 
 class _CreateWeddingScreenState extends ConsumerState<CreateWeddingScreen> {
   int _currentStep = 0;
-  
-  // State to hold the form data across steps
   final Map<String, dynamic> _weddingData = {};
+
+  final List<Map<String, String>> _stepInfo = [
+    {'title': 'Couple Info', 'subtitle': 'Bride & Groom details'},
+    {'title': 'Event Details', 'subtitle': 'Date, time & venue'},
+    {'title': 'Family', 'subtitle': 'Family information'},
+    {'title': 'Gallery', 'subtitle': 'Photos & story'},
+    {'title': 'Theme', 'subtitle': 'Choose a template'},
+    {'title': 'Publish', 'subtitle': 'Go live!'},
+  ];
 
   void _onStepContinue() {
     if (_currentStep < 5) {
       setState(() => _currentStep += 1);
-    } else {
-      // Final submit
     }
   }
 
@@ -37,96 +42,166 @@ class _CreateWeddingScreenState extends ConsumerState<CreateWeddingScreen> {
   }
 
   void _updateData(Map<String, dynamic> data) {
-    setState(() {
-      _weddingData.addAll(data);
-    });
+    setState(() => _weddingData.addAll(data));
+  }
+
+  Widget _buildStepContent() {
+    switch (_currentStep) {
+      case 0:
+        return Step1CoupleInfo(initialData: _weddingData, onSaved: _updateData);
+      case 1:
+        return Step2Details(initialData: _weddingData, onSaved: _updateData);
+      case 2:
+        return Step3Family(initialData: _weddingData, onSaved: _updateData);
+      case 3:
+        return Step4Story(initialData: _weddingData, onSaved: _updateData);
+      case 4:
+        return Step5Template(initialData: _weddingData, onSaved: _updateData);
+      case 5:
+        return Step6Publish(weddingData: _weddingData);
+      default:
+        return const SizedBox.shrink();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.backgroundLight,
       appBar: AppBar(
         title: const Text('Create Wedding Website'),
+        backgroundColor: AppColors.primary,
+        foregroundColor: Colors.white,
+        elevation: 0,
       ),
-      body: Stepper(
-        type: StepperType.horizontal,
-        currentStep: _currentStep,
-        onStepContinue: _onStepContinue,
-        onStepCancel: _onStepCancel,
-        onStepTapped: (step) => setState(() => _currentStep = step),
-        controlsBuilder: (context, details) {
-          // Custom controls if needed, handled by the steps usually, but we can provide generic ones
-          return Padding(
-            padding: const EdgeInsets.only(top: 16.0),
-            child: Row(
-              children: <Widget>[
-                ElevatedButton(
-                  onPressed: details.onStepContinue,
-                  child: Text(_currentStep == 5 ? 'Publish' : 'Next'),
+      body: Column(
+        children: [
+          // ─── Step indicator header ───────────────────────
+          Container(
+            color: AppColors.primary,
+            padding: const EdgeInsets.fromLTRB(16, 4, 16, 20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Step ${_currentStep + 1} of ${_stepInfo.length}',
+                  style: const TextStyle(color: Colors.white70, fontSize: 12),
                 ),
-                if (_currentStep > 0) ...[
-                  const SizedBox(width: 12),
-                  TextButton(
-                    onPressed: details.onStepCancel,
-                    child: const Text('Back'),
+                const SizedBox(height: 4),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        _stepInfo[_currentStep]['title']!,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    Text(
+                      _stepInfo[_currentStep]['subtitle']!,
+                      style: const TextStyle(color: Colors.white70, fontSize: 12),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(4),
+                  child: LinearProgressIndicator(
+                    value: (_currentStep + 1) / _stepInfo.length,
+                    backgroundColor: Colors.white24,
+                    valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
+                    minHeight: 6,
                   ),
-                ],
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: List.generate(_stepInfo.length, (i) {
+                    final isCurrent = i == _currentStep;
+                    final isCompleted = i < _currentStep;
+                    return AnimatedContainer(
+                      duration: const Duration(milliseconds: 300),
+                      margin: const EdgeInsets.symmetric(horizontal: 3),
+                      width: isCurrent ? 24 : 8,
+                      height: 8,
+                      decoration: BoxDecoration(
+                        color: (isCompleted || isCurrent) ? Colors.white : Colors.white38,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    );
+                  }),
+                ),
               ],
             ),
-          );
-        },
-        steps: [
-          Step(
-            title: const Text('Couple'),
-            content: Step1CoupleInfo(
-              initialData: _weddingData,
-              onSaved: _updateData,
-            ),
-            isActive: _currentStep >= 0,
-            state: _currentStep > 0 ? StepState.complete : StepState.indexed,
           ),
-          Step(
-            title: const Text('Details'),
-            content: Step2Details(
-              initialData: _weddingData,
-              onSaved: _updateData,
+
+          // ─── Step content area ───────────────────────────
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: _buildStepContent(),
             ),
-            isActive: _currentStep >= 1,
-            state: _currentStep > 1 ? StepState.complete : StepState.indexed,
           ),
-          Step(
-            title: const Text('Family'),
-            content: Step3Family(
-              initialData: _weddingData,
-              onSaved: _updateData,
+
+          // ─── Bottom navigation ───────────────────────────
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.08),
+                  blurRadius: 8,
+                  offset: const Offset(0, -2),
+                ),
+              ],
             ),
-            isActive: _currentStep >= 2,
-            state: _currentStep > 2 ? StepState.complete : StepState.indexed,
-          ),
-          Step(
-            title: const Text('Gallery'),
-            content: Step4Story(
-              initialData: _weddingData,
-              onSaved: _updateData,
+            child: Row(
+              children: [
+                if (_currentStep > 0) ...[
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: _onStepCancel,
+                      style: OutlinedButton.styleFrom(
+                        side: BorderSide(color: AppColors.primary),
+                        foregroundColor: AppColors.primary,
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: const Text('← Back'),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                ],
+                Expanded(
+                  flex: 2,
+                  child: ElevatedButton(
+                    onPressed: _onStepContinue,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      elevation: 2,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: Text(
+                      _currentStep == 5 ? '🎉 Publish Wedding' : 'Next →',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
-            isActive: _currentStep >= 3,
-            state: _currentStep > 3 ? StepState.complete : StepState.indexed,
-          ),
-          Step(
-            title: const Text('Theme'),
-            content: Step5Template(
-              initialData: _weddingData,
-              onSaved: _updateData,
-            ),
-            isActive: _currentStep >= 4,
-            state: _currentStep > 4 ? StepState.complete : StepState.indexed,
-          ),
-          Step(
-            title: const Text('Publish'),
-            content: Step6Publish(
-              weddingData: _weddingData,
-            ),
-            isActive: _currentStep >= 5,
           ),
         ],
       ),

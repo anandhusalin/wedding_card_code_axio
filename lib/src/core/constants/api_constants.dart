@@ -3,10 +3,10 @@
 class ApiConstants {
   ApiConstants._();
 
-  // ─── Base URL ────────────────────────────────────────────────────
-  /// Default base URL for the Android emulator.
-  /// Override via environment variable or build config for other platforms.
-  static const String defaultBaseUrl = 'http://10.0.2.2:3000';
+  // ─── Base URLs ───────────────────────────────────────────────────
+  // Use Railway server in production, localhost for emulator testing
+  static const String defaultBaseUrl =
+      'https://wedding-cards-api-production.up.railway.app';
 
   /// API version prefix for all endpoints.
   static const String apiPrefix = '/api/v1';
@@ -64,7 +64,7 @@ class ApiConstants {
   // ─── Timeouts ────────────────────────────────────────────────────
   static const int connectionTimeoutMs = 30000;
   static const int receiveTimeoutMs = 30000;
-  static const int sendTimeoutMs = 60000;
+  static const int sendTimeoutMs = 30000;
 
   // ─── Headers ─────────────────────────────────────────────────────
   static const String authorizationHeader = 'Authorization';
