@@ -61,7 +61,7 @@ class HomeScreen extends ConsumerWidget {
                             const SizedBox(width: 8),
                             CircleAvatar(
                               radius: 24,
-                              backgroundColor: AppColors.primary.withOpacity(0.2),
+                              backgroundColor: AppColors.primary.withValues(alpha: 0.2),
                               child: const Icon(Icons.person, color: AppColors.primary),
                             ),
                           ],
@@ -147,7 +147,7 @@ class HomeScreen extends ConsumerWidget {
                         );
                       },
                       loading: () => const Center(child: CircularProgressIndicator()),
-                      error: (_, __) => const SizedBox.shrink(),
+                      error: (_, _) => const SizedBox.shrink(),
                     ),
                   ]),
                 ),
@@ -172,7 +172,7 @@ class _StatCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.primary.withOpacity(0.1),
+        color: AppColors.primary.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
@@ -208,9 +208,9 @@ class _ActionCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
+          color: color.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: color.withOpacity(0.3)),
+          border: Border.all(color: color.withValues(alpha: 0.3)),
         ),
         child: Column(
           children: [

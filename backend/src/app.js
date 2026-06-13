@@ -7,7 +7,7 @@ const morgan = require('morgan');
 const mongoSanitize = require('express-mongo-sanitize');
 const hpp = require('hpp');
 
-const { globalLimiter } = require('./middlewares/rateLimiter');
+const { globalLimiter, publicLimiter } = require('./middlewares/rateLimiter');
 const errorHandler = require('./middlewares/errorHandler');
 
 // Route imports
@@ -107,16 +107,15 @@ app.use('/api/v1/upload', uploadRoutes);
 // Public wedding page — GET /:slug
 // ────────────────────────────────────────────
 
-app.get('/:slug', async (req, res, next) => {
+app.get('/:slug', publicLimiter, async (req, res, next) => {
   try {
     const { slug } = req.params;
 
-    // Ignore slugs that look like API paths or static files
-    if (
-      slug.startsWith('api') ||
-      slug.includes('.') ||
-      slug === 'favicon.ico'
-    ) {
+    // Slugs are generated server-side via nanoid + slugify, producing
+    // 3-100 chars from [a-z0-9_-]. Anything outside that shape is a 404
+    // (or fall-through to API/static).
+    const slugShape = /^[a-z0-9_-]{3,100}$/;
+    if (!slugShape.test(slug)) {
       return next();
     }
 

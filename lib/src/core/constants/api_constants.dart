@@ -4,9 +4,44 @@ class ApiConstants {
   ApiConstants._();
 
   // ─── Base URLs ───────────────────────────────────────────────────
-  // Use Railway server in production, localhost for emulator testing
+  // The backend is hosted on Railway and serves BOTH the JSON API and the
+  // public wedding pages (EJS at /:slug). Override at runtime with
+  // --dart-define=API_BASE_URL=https://your.host if you redeploy.
   static const String defaultBaseUrl =
       'https://wedding-cards-api-production.up.railway.app';
+
+  /// Base URL for human-visible public wedding pages. Same host as the API
+  /// (Express renders EJS at /:slug) but kept as a separate constant in
+  /// case the public site is later moved to a CDN/edge frontend.
+  static const String publicBaseUrl = defaultBaseUrl;
+
+  /// Localhost base URL for Android emulator (10.0.2.2 maps to host's localhost).
+  static const String localhostBaseUrl = 'http://10.0.2.2:3000';
+
+  /// Set to true to bypass the deployed URL and use a local backend.
+  /// Run `cd backend && npm start` in a separate terminal to host locally.
+  /// True for local-only dev (10.0.2.2 from the Android emulator).
+  static const bool kIsLocalApi = true;
+
+  /// Resolved base URL for the JSON API based on the kIsLocalApi toggle.
+  /// Can be overridden at build time with --dart-define=API_BASE_URL=...
+  static String get resolvedBaseUrl {
+    const override = String.fromEnvironment('API_BASE_URL');
+    if (override.isNotEmpty) return override;
+    return kIsLocalApi ? localhostBaseUrl : defaultBaseUrl;
+  }
+
+  /// Resolved base URL for public-facing wedding pages. Can be overridden
+  /// independently with --dart-define=PUBLIC_BASE_URL=...
+  static String get resolvedPublicBaseUrl {
+    const override = String.fromEnvironment('PUBLIC_BASE_URL');
+    if (override.isNotEmpty) return override;
+    return kIsLocalApi ? localhostBaseUrl : publicBaseUrl;
+  }
+
+  /// Full public URL for a single wedding (what guests open in a browser).
+  static String publicWeddingUrl(String slug) =>
+      '$resolvedPublicBaseUrl/$slug';
 
   /// API version prefix for all endpoints.
   static const String apiPrefix = '/api/v1';

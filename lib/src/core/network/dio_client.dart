@@ -5,6 +5,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../constants/api_constants.dart';
+import '../constants/app_constants.dart';
 import 'api_interceptors.dart';
 
 part 'dio_client.g.dart';
@@ -31,7 +32,7 @@ Dio dio(Ref ref) {
 
   final dio = Dio(
     BaseOptions(
-      baseUrl: ApiConstants.defaultBaseUrl,
+      baseUrl: ApiConstants.resolvedBaseUrl,
       connectTimeout:
           const Duration(milliseconds: ApiConstants.connectionTimeoutMs),
       receiveTimeout:
@@ -46,9 +47,27 @@ Dio dio(Ref ref) {
     ),
   );
 
-  // Add auth interceptor
+  // Add auth interceptor with auto-logout on 401
   dio.interceptors.add(
-    AuthInterceptor(secureStorage: storage),
+    AuthInterceptor(
+      secureStorage: storage,
+      onUnauthorized: () {
+        // The interceptor can't await inside Dio's error chain. We use a
+        // microtask so the storage clear (which is async) is queued up
+        // before the auth controller's logout() runs. The router's
+        // refreshListenable (wired in app_router.dart) then picks up the
+        // auth state change and redirects to /login.
+        Future.microtask(() async {
+          try {
+            await storage.delete(key: AppConstants.tokenKey);
+            await storage.delete(key: AppConstants.refreshTokenKey);
+            await storage.delete(key: AppConstants.userKey);
+          } catch (_) {
+            // Storage already cleared or unavailable — ignore.
+          }
+        });
+      },
+    ),
   );
 
   // Add logging interceptor only in debug mode

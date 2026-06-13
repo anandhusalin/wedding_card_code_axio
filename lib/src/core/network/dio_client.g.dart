@@ -26,7 +26,7 @@ final secureStorageProvider =
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef SecureStorageRef = AutoDisposeProviderRef<FlutterSecureStorage>;
-String _$dioHash() => r'76640269b229e5876d3ea2378e4de80af5c68c09';
+String _$dioHash() => r'a5a41e3502a62ad5820fe98625ab077095ab7420';
 
 /// Provider for the configured Dio HTTP client instance.
 /// Includes JWT auth interceptor, logging interceptor (debug only),

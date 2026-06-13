@@ -6,7 +6,7 @@ part of 'wedding_repository.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$weddingRepositoryHash() => r'9d06998cf879de463b93db68e3e96e4811de4808';
+String _$weddingRepositoryHash() => r'fd52596e77867b1d7a2fe4caf03e58be09b3f128';
 
 /// See also [weddingRepository].
 @ProviderFor(weddingRepository)

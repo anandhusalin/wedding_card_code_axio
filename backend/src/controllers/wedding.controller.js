@@ -101,11 +101,70 @@ const deleteWedding = async (req, res, next) => {
   }
 };
 
+/**
+ * PATCH /api/v1/weddings/:id/unpublish
+ */
+const unpublish = async (req, res, next) => {
+  try {
+    const wedding = await weddingService.unpublish(req.params.id, req.user.userId);
+    res.status(200).json({ success: true, data: { wedding } });
+  } catch (err) {
+    next(err);
+  }
+};
+
+/**
+ * POST /api/v1/weddings/:id/duplicate
+ */
+const duplicate = async (req, res, next) => {
+  try {
+    const wedding = await weddingService.duplicate(req.params.id, req.user.userId);
+    res.status(201).json({ success: true, data: { wedding } });
+  } catch (err) {
+    next(err);
+  }
+};
+
+/**
+ * GET /api/v1/weddings/:id/stats
+ */
+const stats = async (req, res, next) => {
+  try {
+    const data = await weddingService.getStats(req.params.id, req.user.userId);
+    res.status(200).json({ success: true, data });
+  } catch (err) {
+    next(err);
+  }
+};
+
+/**
+ * GET /api/v1/weddings/:id/preview
+ * Renders the public template for the owner (allows drafts).
+ */
+const preview = async (req, res, next) => {
+  try {
+    const wedding = await weddingService.getById(req.params.id, req.user.userId);
+    res.render('layouts/base', {
+      wedding,
+      title: wedding.metaTitle || `${wedding.groomName} & ${wedding.brideName}'s Wedding (Preview)`,
+      description: wedding.metaDescription || wedding.invitationMessage || '',
+      ogImage: wedding.ogImage || wedding.couplePhoto || '',
+      baseUrl: require('../config/env').baseUrl,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 module.exports = {
   create,
   getAll,
   getById,
   update,
   publish,
+  unpublish,
+  duplicate,
+  stats,
+  preview,
   delete: deleteWedding,
 };

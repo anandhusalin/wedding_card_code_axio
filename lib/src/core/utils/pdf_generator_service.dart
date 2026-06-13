@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-import 'package:flutter/services.dart' show rootBundle;
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
@@ -14,8 +12,8 @@ class PdfGeneratorService {
     final font = await PdfGoogleFonts.playfairDisplayRegular();
     final fontBold = await PdfGoogleFonts.playfairDisplayBold();
 
-    // Generate QR Code data
-    final url = '${ApiConstants.defaultBaseUrl}/${wedding.slug}';
+    // Generate QR Code data — point at the public wedding page, not the API root
+    final url = ApiConstants.publicWeddingUrl(wedding.slug);
 
     pdf.addPage(
       pw.Page(

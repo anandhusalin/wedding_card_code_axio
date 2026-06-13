@@ -3,14 +3,24 @@
     <div class="hero-content gs-reveal">
         <div class="kerala-ornament top"></div>
         <h3 class="hero-subtitle">Together with their families</h3>
-        <h1 class="hero-title"><%= wedding.groomName %> & <%= wedding.brideName %></h1>
+        <h1 class="hero-title"><%= wedding.groomName %> &amp; <%= wedding.brideName %></h1>
         <p class="hero-date">
             <% const d = new Date(wedding.weddingDate); %>
             <%= d.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) %>
         </p>
         <p class="hero-venue"><%= wedding.venue?.name || 'Venue TBA' %></p>
+
+        <div id="countdown" class="countdown" aria-label="Countdown to wedding">
+            <div class="countdown-cell"><span class="countdown-num" data-cd="days">00</span><span class="countdown-label">Days</span></div>
+            <div class="countdown-cell"><span class="countdown-num" data-cd="hours">00</span><span class="countdown-label">Hours</span></div>
+            <div class="countdown-cell"><span class="countdown-num" data-cd="minutes">00</span><span class="countdown-label">Minutes</span></div>
+            <div class="countdown-cell"><span class="countdown-num" data-cd="seconds">00</span><span class="countdown-label">Seconds</span></div>
+        </div>
+        <p id="countdownCelebrated" class="countdown-celebrated" style="display:none;">Today we celebrate! 🎉</p>
+
         <div class="kerala-ornament bottom"></div>
     </div>
+    <div class="scroll-cue" aria-hidden="true">⌄</div>
 </header>
 
 <main>
@@ -34,12 +44,12 @@
                     </div>
                     <h3 class="person-name"><%= wedding.groomName %></h3>
                     <p class="person-parents">
-                        Son of <%= wedding.groomFamily?.fatherName || 'Mr.' %> & <%= wedding.groomFamily?.motherName || 'Mrs.' %>
+                        Son of <%= wedding.groomFamily?.fatherName || 'Mr.' %> &amp; <%= wedding.groomFamily?.motherName || 'Mrs.' %>
                     </p>
                 </div>
-                
+
                 <div class="and-separator gs-reveal">&amp;</div>
-                
+
                 <div class="person-card gs-reveal gs-right">
                     <div class="person-photo-wrapper">
                         <img src="<%= wedding.bridePhoto || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80' %>" alt="<%= wedding.brideName %>" class="person-photo">
@@ -47,11 +57,11 @@
                     </div>
                     <h3 class="person-name"><%= wedding.brideName %></h3>
                     <p class="person-parents">
-                        Daughter of <%= wedding.brideFamily?.fatherName || 'Mr.' %> & <%= wedding.brideFamily?.motherName || 'Mrs.' %>
+                        Daughter of <%= wedding.brideFamily?.fatherName || 'Mr.' %> &amp; <%= wedding.brideFamily?.motherName || 'Mrs.' %>
                     </p>
                 </div>
             </div>
-            
+
             <% if (wedding.coupleStory) { %>
             <div class="story-container gs-reveal">
                 <h3 class="story-title">Our Story</h3>
@@ -65,27 +75,43 @@
         <div class="container">
             <h2 class="section-title text-center gs-reveal">Wedding Details</h2>
             <div class="ornament-divider gs-reveal"></div>
-            
-            <div class="event-card gs-reveal">
-                <h3 class="event-name">Muhurtham</h3>
-                <div class="event-info">
-                    <div class="info-item">
-                        <span class="icon">📅</span>
-                        <span><%= new Date(wedding.weddingDate).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' }) %></span>
-                    </div>
-                    <div class="info-item">
-                        <span class="icon">⏰</span>
-                        <span><%= wedding.weddingTime || '10:00 AM' %></span>
-                    </div>
-                    <div class="info-item">
-                        <span class="icon">📍</span>
-                        <span><%= wedding.venue?.name %>, <%= wedding.venue?.address %></span>
-                    </div>
+
+            <% if (wedding.timeline && wedding.timeline.length > 0) { %>
+                <div class="timeline gs-reveal">
+                    <% wedding.timeline.forEach(function (ev) { %>
+                        <div class="timeline-item">
+                            <h4><%= ev.title %></h4>
+                            <% if (ev.date) { %>
+                                <div class="timeline-date"><%= new Date(ev.date).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' }) %></div>
+                            <% } %>
+                            <% if (ev.description) { %><p><%= ev.description %></p><% } %>
+                        </div>
+                    <% }) %>
                 </div>
-                <% if (wedding.venue?.mapUrl) { %>
-                <a href="<%= wedding.venue.mapUrl %>" target="_blank" class="btn btn-outline">View on Map</a>
-                <% } %>
-            </div>
+            <% } else { %>
+                <div class="event-card gs-reveal">
+                    <h3 class="event-name">Muhurtham</h3>
+                    <div class="event-info">
+                        <div class="info-item">
+                            <span class="icon">📅</span>
+                            <span><%= new Date(wedding.weddingDate).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' }) %></span>
+                        </div>
+                        <div class="info-item">
+                            <span class="icon">⏰</span>
+                            <span><%= wedding.weddingTime || '10:00 AM' %></span>
+                        </div>
+                        <% if (wedding.venue?.name || wedding.venue?.address) { %>
+                        <div class="info-item">
+                            <span class="icon">📍</span>
+                            <span><%= wedding.venue?.name %><%= wedding.venue?.name && wedding.venue?.address ? ', ' : '' %><%= wedding.venue?.address %></span>
+                        </div>
+                        <% } %>
+                    </div>
+                    <% if (wedding.venue?.mapUrl) { %>
+                    <a href="<%= wedding.venue.mapUrl %>" target="_blank" rel="noopener" class="btn btn-outline">View on Map</a>
+                    <% } %>
+                </div>
+            <% } %>
         </div>
     </section>
 
@@ -95,9 +121,9 @@
             <h2 class="section-title text-center gs-reveal">Gallery</h2>
             <div class="ornament-divider gs-reveal"></div>
             <div class="gallery-grid">
-                <% wedding.galleryPhotos.forEach((photo, index) => { %>
-                    <div class="gallery-item gs-reveal" style="transition-delay: <%= index * 100 %>ms">
-                        <img src="<%= photo.url %>" alt="<%= photo.caption || 'Wedding Photo' %>">
+                <% wedding.galleryPhotos.forEach(function (photo) { %>
+                    <div class="gallery-item gs-reveal" tabindex="0" role="button" aria-label="Open photo">
+                        <img src="<%= photo.url %>" alt="<%= photo.caption || 'Wedding photo' %>" loading="lazy">
                     </div>
                 <% }) %>
             </div>
@@ -110,16 +136,19 @@
         <div class="container gs-reveal">
             <h2 class="section-title">Are you attending?</h2>
             <p class="mb-4">Please let us know if you can make it to our special day.</p>
-            <button class="btn btn-primary btn-large" onclick="openRsvpModal()">RSVP Now</button>
+            <button class="btn btn-primary btn-large" type="button" onclick="openRsvpModal()">RSVP Now</button>
         </div>
     </section>
     <% } %>
 </main>
 
+<aside id="shareRail" class="share-rail" aria-label="Share this wedding"></aside>
+<button id="musicToggle" class="music-toggle" type="button" aria-label="Toggle background music">♪</button>
+
 <footer class="footer">
     <div class="container text-center">
         <div class="kerala-ornament footer-ornament"></div>
-        <h2 class="footer-names"><%= wedding.groomName %> & <%= wedding.brideName %></h2>
+        <h2 class="footer-names"><%= wedding.groomName %> &amp; <%= wedding.brideName %></h2>
         <p>Thank you for being part of our journey.</p>
         <p class="made-with">Created with Wedding Cards App</p>
     </div>

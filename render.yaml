@@ -14,3 +14,17 @@ services:
         generateValue: true
       - key: JWT_EXPIRES_IN
         value: 7d
+      - key: NODE_ENV
+        value: production
+      # Required by env.js — set these in the Render dashboard
+      # (sync: false means "user provides", not auto-generated).
+      # The values come from the Render dashboard, not this file.
+      - key: BASE_URL
+        sync: false
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+

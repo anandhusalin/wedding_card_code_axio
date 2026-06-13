@@ -51,8 +51,27 @@ const rsvpLimiter = rateLimit({
   },
 });
 
+/**
+ * Public page rate limiter: 60 requests per 15 minutes per IP.
+ * Prevents slug enumeration brute-force on the public route.
+ */
+const publicLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 60,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    success: false,
+    error: {
+      message: 'Too many requests. Please slow down.',
+      statusCode: 429,
+    },
+  },
+});
+
 module.exports = {
   globalLimiter,
   authLimiter,
   rsvpLimiter,
+  publicLimiter,
 };

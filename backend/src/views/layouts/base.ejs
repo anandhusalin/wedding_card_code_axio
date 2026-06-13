@@ -36,9 +36,19 @@
         }
     </style>
 </head>
-<body class="template-<%= wedding.templateId %> theme-<%= wedding.theme?.mode || 'light' %>">
+<body
+    class="template-<%= wedding.templateId %> theme-<%= wedding.theme?.mode || 'light' %>"
+    data-wedding-date="<%= wedding.weddingDate ? new Date(wedding.weddingDate).toISOString() : '' %>"
+    data-music-url="<%= wedding.musicUrl || '' %>">
 
     <%- include(`../templates/${wedding.templateId}`, { wedding }) %>
+
+    <!-- Free badge for free-tier users (Pro users hide this) -->
+    <% if (!wedding.userId || !wedding.userId.plan || wedding.userId.plan === 'free') { %>
+        <div style="text-align: center; padding: 20px; background: #f5f5f5; font-size: 13px;">
+            <%- include('../partials/free-badge') %>
+        </div>
+    <% } %>
 
     <!-- RSVP Modal Template -->
     <% if (wedding.isRsvpEnabled) { %>

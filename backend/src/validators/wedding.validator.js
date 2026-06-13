@@ -21,7 +21,15 @@ const coordinatesSchema = z.object({
 const venueSchema = z.object({
   name: z.string().max(200).optional(),
   address: z.string().max(500).optional(),
-  mapUrl: z.string().url().optional().or(z.literal('')),
+  // Accept empty strings, valid URLs, or omit the field entirely. Bare
+  // non-URL text (e.g. "df") is rejected with a clear field-level error.
+  mapUrl: z
+    .string()
+    .optional()
+    .refine(
+      (v) => v == null || v === '' || /^https?:\/\//i.test(v),
+      { message: 'Must be a URL (http:// or https://) or empty' },
+    ),
   coordinates: coordinatesSchema.optional(),
 });
 
@@ -36,6 +44,16 @@ const themeSchema = z.object({
   fontFamily: z.string().max(100).optional(),
   coverImage: z.string().optional(),
 });
+
+// Hardcoded list of valid template IDs. All are admin-defined. Frontend could
+// eventually include user-uploaded templates, but for now this enforces only
+// the 4 approved free templates.
+const TEMPLATE_IDS = [
+  'traditional-kerala',
+  'modern-elegant',
+  'floral-romance',
+  'royal-maroon',
+];
 
 const createWeddingSchema = z.object({
   groomName: z
@@ -65,7 +83,13 @@ const createWeddingSchema = z.object({
   timeline: z.array(timelineItemSchema).max(20).optional(),
   engagementPhotos: z.array(photoSchema).max(50).optional(),
   galleryPhotos: z.array(photoSchema).max(100).optional(),
-  templateId: z.string().max(50).optional(),
+  templateId: z
+    .enum(TEMPLATE_IDS, {
+      errorMap: () => ({
+        message: `templateId must be one of: ${TEMPLATE_IDS.join(', ')}`,
+      }),
+    })
+    .optional(),
   language: z.enum(['en', 'ml', 'en_ml']).optional(),
   theme: themeSchema.optional(),
   isPublished: z.boolean().optional(),
@@ -111,4 +135,5 @@ module.exports = {
   createWeddingSchema,
   updateWeddingSchema,
   validate,
+  TEMPLATE_IDS,
 };

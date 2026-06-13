@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/widgets/app_text_field.dart';
@@ -22,7 +21,7 @@ class Step4Story extends ConsumerStatefulWidget {
 class _Step4StoryState extends ConsumerState<Step4Story> {
   late TextEditingController _storyController;
   
-  List<String> _galleryPhotosLocal = [];
+  final List<String> _galleryPhotosLocal = [];
   List<Map<String, dynamic>> _galleryPhotosRemote = [];
   bool _isUploading = false;
 

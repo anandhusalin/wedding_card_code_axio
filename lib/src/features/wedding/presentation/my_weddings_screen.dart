@@ -77,7 +77,7 @@ class WeddingCardWidget extends ConsumerWidget {
   const WeddingCardWidget({super.key, required this.wedding});
 
   Future<void> _openPreview(BuildContext context) async {
-    final url = Uri.parse('${ApiConstants.defaultBaseUrl}/${wedding.slug}');
+    final url = Uri.parse(ApiConstants.publicWeddingUrl(wedding.slug));
     if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -88,12 +88,12 @@ class WeddingCardWidget extends ConsumerWidget {
   }
 
   void _shareWedding(BuildContext context) {
-    final url = '${ApiConstants.defaultBaseUrl}/${wedding.slug}';
+    final url = ApiConstants.publicWeddingUrl(wedding.slug);
     Share.share('Check out our wedding website! $url');
   }
 
   void _showQrCode(BuildContext context) {
-    final url = '${ApiConstants.defaultBaseUrl}/${wedding.slug}';
+    final url = ApiConstants.publicWeddingUrl(wedding.slug);
     showDialog(
       context: context,
       builder: (context) => AlertDialog(

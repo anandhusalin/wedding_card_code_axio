@@ -26,7 +26,7 @@ class RsvpListScreen extends ConsumerWidget {
           statsState.when(
             data: (stats) => Container(
               padding: const EdgeInsets.all(16),
-              color: AppColors.primary.withOpacity(0.1),
+              color: AppColors.primary.withValues(alpha: 0.1),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
@@ -38,7 +38,7 @@ class RsvpListScreen extends ConsumerWidget {
               ),
             ),
             loading: () => const LinearProgressIndicator(),
-            error: (_, __) => const SizedBox.shrink(),
+            error: (_, _) => const SizedBox.shrink(),
           ),
 
           // List
@@ -54,12 +54,12 @@ class RsvpListScreen extends ConsumerWidget {
                 return ListView.separated(
                   padding: const EdgeInsets.all(16),
                   itemCount: rsvps.length,
-                  separatorBuilder: (_, __) => const Divider(),
+                  separatorBuilder: (_, _) => const Divider(),
                   itemBuilder: (context, index) {
                     final rsvp = rsvps[index];
                     return ListTile(
                       leading: CircleAvatar(
-                        backgroundColor: _getStatusColor(rsvp.status).withOpacity(0.2),
+                        backgroundColor: _getStatusColor(rsvp.status).withValues(alpha: 0.2),
                         child: Icon(
                           _getStatusIcon(rsvp.status),
                           color: _getStatusColor(rsvp.status),

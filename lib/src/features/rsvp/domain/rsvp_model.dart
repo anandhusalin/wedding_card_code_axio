@@ -9,7 +9,8 @@ abstract class Rsvp with _$Rsvp {
 
   const factory Rsvp({
     required String id,
-    @JsonKey(name: '_id') String? serverId,
+    @JsonKey(name: '_id') // ignore: invalid_annotation_target
+    String? serverId,
     required String weddingId,
     required String guestName,
     String? phone,

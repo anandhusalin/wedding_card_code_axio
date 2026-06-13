@@ -22,6 +22,18 @@ router.put('/:id', validate(updateWeddingSchema), weddingController.update);
 // PATCH /api/v1/weddings/:id/publish
 router.patch('/:id/publish', weddingController.publish);
 
+// PATCH /api/v1/weddings/:id/unpublish
+router.patch('/:id/unpublish', weddingController.unpublish);
+
+// POST /api/v1/weddings/:id/duplicate
+router.post('/:id/duplicate', weddingController.duplicate);
+
+// GET /api/v1/weddings/:id/stats
+router.get('/:id/stats', weddingController.stats);
+
+// GET /api/v1/weddings/:id/preview
+router.get('/:id/preview', weddingController.preview);
+
 // DELETE /api/v1/weddings/:id
 router.delete('/:id', weddingController.delete);
 

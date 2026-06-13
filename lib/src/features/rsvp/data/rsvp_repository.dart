@@ -7,6 +7,7 @@ import '../domain/rsvp_model.dart';
 part 'rsvp_repository.g.dart';
 
 class RsvpRepository {
+  // ignore: unused_field
   final Dio _dio;
 
   RsvpRepository(this._dio);
@@ -44,6 +45,6 @@ class RsvpRepository {
 }
 
 @riverpod
-RsvpRepository rsvpRepository(RsvpRepositoryRef ref) {
+RsvpRepository rsvpRepository(Ref ref) {
   return RsvpRepository(ref.watch(dioProvider));
 }

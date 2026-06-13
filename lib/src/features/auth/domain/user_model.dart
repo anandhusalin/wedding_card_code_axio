@@ -8,6 +8,7 @@ abstract class User with _$User {
   const User._();
 
   const factory User({
+    @JsonKey(name: '_id') // ignore: invalid_annotation_target
     required String id,
     required String email,
     required String displayName,

@@ -26,11 +26,24 @@ class _Step2DetailsState extends State<Step2Details> {
   @override
   void initState() {
     super.initState();
-    _selectedDate = widget.initialData['weddingDate'];
-    _timeController = TextEditingController(text: widget.initialData['weddingTime']);
+    _selectedDate = _parseDate(widget.initialData['weddingDate']);
+    _timeController = TextEditingController(text: widget.initialData['weddingTime'] as String?);
     _venueController = TextEditingController(text: widget.initialData['venue']?['name']);
     _addressController = TextEditingController(text: widget.initialData['venue']?['address']);
     _mapUrlController = TextEditingController(text: widget.initialData['venue']?['mapUrl']);
+  }
+
+  /// Defensive parser: the shared `_weddingData` map can hold the date as a
+  /// `DateTime` (set by this step) or as a `String` (left over from the
+  /// publish step's `.toIso8601String()` conversion). We accept both so the
+  /// user can navigate back and forward without crashing.
+  DateTime? _parseDate(dynamic raw) {
+    if (raw == null) return null;
+    if (raw is DateTime) return raw;
+    if (raw is String) {
+      return DateTime.tryParse(raw);
+    }
+    return null;
   }
 
   void _save() {

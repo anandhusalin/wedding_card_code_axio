@@ -1,4 +1,239 @@
-<div style="text-align: center; padding: 100px 20px;">
-    <h1><%= wedding.groomName %> & <%= wedding.brideName %></h1>
-    <p>Modern Elegant template coming soon!</p>
+<!--
+  Modern Elegant template — a self-contained, scoped alternative to
+  traditional-kerala.ejs. All selectors are prefixed with
+  .modern-elegant-template so they don't collide with style.css.
+-->
+<style>
+  .modern-elegant-template {
+    --me-accent: #1f2937;
+    --me-soft: #f6f1ea;
+    --me-line: #e5e0d8;
+    font-family: 'Inter', sans-serif;
+    color: #2A2A2A;
+  }
+  .modern-elegant-template .me-hero {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    min-height: 90vh;
+    background: var(--me-soft);
+  }
+  .modern-elegant-template .me-hero-text {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 80px 64px;
+  }
+  .modern-elegant-template .me-eyebrow {
+    font-size: 12px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: #8a7e6e;
+    margin-bottom: 16px;
+  }
+  .modern-elegant-template .me-names {
+    font-family: 'Playfair Display', serif;
+    font-size: 64px;
+    line-height: 1.1;
+    margin: 0 0 16px;
+    font-weight: 500;
+  }
+  .modern-elegant-template .me-ampersand {
+    font-style: italic;
+    color: #bfa987;
+    font-weight: 300;
+  }
+  .modern-elegant-template .me-date {
+    font-size: 18px;
+    color: #555;
+    margin-top: 12px;
+  }
+  .modern-elegant-template .me-hero-photo {
+    background-size: cover;
+    background-position: center;
+  }
+  .modern-elegant-template .me-section {
+    padding: 80px 32px;
+    max-width: 880px;
+    margin: 0 auto;
+  }
+  .modern-elegant-template .me-section h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 36px;
+    text-align: center;
+    margin-bottom: 32px;
+    font-weight: 500;
+  }
+  .modern-elegant-template .me-couple {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 24px;
+    text-align: center;
+  }
+  .modern-elegant-template .me-couple img {
+    width: 180px; height: 180px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin: 0 auto 16px;
+  }
+  .modern-elegant-template .me-couple h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 24px;
+    margin: 0 0 4px;
+    font-weight: 500;
+  }
+  .modern-elegant-template .me-couple p { color: #6b6b6b; font-size: 14px; margin: 0; }
+  .modern-elegant-template .me-amp {
+    font-family: 'Playfair Display', serif;
+    font-size: 48px;
+    color: #bfa987;
+  }
+  .modern-elegant-template .me-story {
+    text-align: center;
+    line-height: 1.8;
+    font-size: 18px;
+    color: #444;
+    max-width: 640px;
+    margin: 0 auto;
+    font-style: italic;
+  }
+  .modern-elegant-template .me-event {
+    border: 1px solid var(--me-line);
+    border-radius: 12px;
+    padding: 32px;
+    text-align: center;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+  .modern-elegant-template .me-event h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 24px;
+    margin: 0 0 8px;
+    font-weight: 500;
+  }
+  .modern-elegant-template .me-event p { color: #6b6b6b; margin: 4px 0; }
+  .modern-elegant-template .me-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+  }
+  .modern-elegant-template .me-grid .gallery-item { aspect-ratio: 1; }
+  .modern-elegant-template .me-cta {
+    background: var(--me-accent);
+    color: #fff;
+    text-align: center;
+    padding: 80px 32px;
+  }
+  .modern-elegant-template .me-cta h2 { color: #fff; }
+  .modern-elegant-template .me-cta p { color: rgba(255,255,255,0.8); margin-bottom: 24px; }
+  .modern-elegant-template .me-cta .btn-primary {
+    background: #fff;
+    color: var(--me-accent);
+  }
+  .modern-elegant-template .me-foot {
+    text-align: center;
+    padding: 40px 24px;
+    color: #999;
+    font-size: 14px;
+  }
+  .modern-elegant-template .me-beta {
+    display: inline-block;
+    margin-top: 12px;
+    padding: 4px 10px;
+    background: rgba(191, 169, 135, 0.2);
+    color: #8a7e6e;
+    border-radius: 100px;
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  @media (max-width: 768px) {
+    .modern-elegant-template .me-hero { grid-template-columns: 1fr; }
+    .modern-elegant-template .me-hero-text { padding: 48px 24px; }
+    .modern-elegant-template .me-names { font-size: 40px; }
+    .modern-elegant-template .me-couple { grid-template-columns: 1fr; }
+  }
+</style>
+
+<div class="modern-elegant-template">
+  <header class="me-hero">
+    <div class="me-hero-text gs-reveal">
+      <p class="me-eyebrow">We're getting married</p>
+      <h1 class="me-names">
+        <%= wedding.groomName %><br>
+        <span class="me-ampersand">&amp;</span> <%= wedding.brideName %>
+      </h1>
+      <p class="me-date">
+        <% const d = new Date(wedding.weddingDate); %>
+        <%= d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' }) %>
+      </p>
+      <p class="me-date"><%= wedding.venue?.name || 'Venue TBA' %></p>
+      <span class="me-beta">Modern Elegant · Beta</span>
+    </div>
+    <div class="me-hero-photo" style="background-image: url('<%= wedding.couplePhoto || 'https://images.unsplash.com/photo-1519741497674-611481863552?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80' %>');"></div>
+  </header>
+
+  <% if (wedding.invitationMessage) { %>
+  <section class="me-section">
+    <h2>Our Invitation</h2>
+    <p class="me-story"><%= wedding.invitationMessage %></p>
+  </section>
+  <% } %>
+
+  <section class="me-section">
+    <h2>The Couple</h2>
+    <div class="me-couple">
+      <div class="gs-reveal">
+        <img src="<%= wedding.groomPhoto || 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80' %>" alt="<%= wedding.groomName %>">
+        <h3><%= wedding.groomName %></h3>
+        <p><%= wedding.groomFamily?.fatherName || '' %><%= wedding.groomFamily?.fatherName ? ' & ' : '' %><%= wedding.groomFamily?.motherName || '' %></p>
+      </div>
+      <div class="me-amp">&amp;</div>
+      <div class="gs-reveal">
+        <img src="<%= wedding.bridePhoto || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80' %>" alt="<%= wedding.brideName %>">
+        <h3><%= wedding.brideName %></h3>
+        <p><%= wedding.brideFamily?.fatherName || '' %><%= wedding.brideFamily?.fatherName ? ' & ' : '' %><%= wedding.brideFamily?.motherName || '' %></p>
+      </div>
+    </div>
+
+    <% if (wedding.coupleStory) { %>
+    <p class="me-story" style="margin-top: 40px;"><%= wedding.coupleStory %></p>
+    <% } %>
+  </section>
+
+  <section class="me-section">
+    <h2>When &amp; Where</h2>
+    <div class="me-event gs-reveal">
+      <h3>The Wedding</h3>
+      <p><%= new Date(wedding.weddingDate).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' }) %></p>
+      <p><%= wedding.weddingTime || '10:00 AM' %></p>
+      <% if (wedding.venue?.name) { %><p><%= wedding.venue.name %></p><% } %>
+      <% if (wedding.venue?.address) { %><p><%= wedding.venue.address %></p><% } %>
+    </div>
+  </section>
+
+  <% if (wedding.galleryPhotos && wedding.galleryPhotos.length > 0) { %>
+  <section class="me-section">
+    <h2>Moments</h2>
+    <div class="me-grid gallery-grid">
+      <% wedding.galleryPhotos.forEach(function (photo) { %>
+        <div class="gallery-item gs-reveal" tabindex="0" role="button">
+          <img src="<%= photo.url %>" alt="<%= photo.caption || 'Photo' %>" loading="lazy">
+        </div>
+      <% }) %>
+    </div>
+  </section>
+  <% } %>
+
+  <% if (wedding.isRsvpEnabled) { %>
+  <section class="me-cta gs-reveal">
+    <h2>Will you join us?</h2>
+    <p>Kindly let us know if you'll be there.</p>
+    <button class="btn btn-primary btn-large" type="button" onclick="openRsvpModal()">RSVP</button>
+  </section>
+  <% } %>
+
+  <footer class="me-foot">
+    <%= wedding.groomName %> &amp; <%= wedding.brideName %>
+  </footer>
 </div>

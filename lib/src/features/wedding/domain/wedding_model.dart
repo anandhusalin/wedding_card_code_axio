@@ -9,7 +9,8 @@ abstract class Wedding with _$Wedding {
 
   const factory Wedding({
     required String id,
-    @JsonKey(name: '_id') String? serverId,
+    @JsonKey(name: '_id') // ignore: invalid_annotation_target
+    String? serverId,
     required String userId,
     required String slug,
     
