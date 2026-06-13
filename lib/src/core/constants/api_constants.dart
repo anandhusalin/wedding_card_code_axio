@@ -20,8 +20,8 @@ class ApiConstants {
 
   /// Set to true to bypass the deployed URL and use a local backend.
   /// Run `cd backend && npm start` in a separate terminal to host locally.
-  /// True for local-only dev (10.0.2.2 from the Android emulator).
-  static const bool kIsLocalApi = true;
+  /// False → uses the Railway production API.
+  static const bool kIsLocalApi = false;
 
   /// Resolved base URL for the JSON API based on the kIsLocalApi toggle.
   /// Can be overridden at build time with --dart-define=API_BASE_URL=...
