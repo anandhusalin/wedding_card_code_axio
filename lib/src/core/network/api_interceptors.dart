@@ -38,12 +38,18 @@ class AuthInterceptor extends Interceptor {
   void onError(DioException err, ErrorInterceptorHandler handler) async {
     if (err.response?.statusCode == 401) {
       debugPrint('AuthInterceptor: Received 401 – clearing stored token');
+      // Best-effort: even if delete fails (e.g. iOS Keychain entitlement
+      // missing in dev), the redirect to login still happens. The login
+      // flow overwrites the stale token, so the bad state self-heals.
       try {
         await secureStorage.delete(key: AppConstants.tokenKey);
         await secureStorage.delete(key: AppConstants.refreshTokenKey);
         await secureStorage.delete(key: AppConstants.userKey);
       } catch (e) {
-        debugPrint('AuthInterceptor: Failed to clear token - $e');
+        debugPrint(
+          'AuthInterceptor: Could not clear stored token (will be overwritten '
+          'on next login). Cause: $e',
+        );
       }
       onUnauthorized?.call();
     }
