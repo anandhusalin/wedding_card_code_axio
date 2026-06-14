@@ -25,6 +25,7 @@ class _Step3FamilyState extends State<Step3Family> {
   late TextEditingController _brideMotherController;
   late TextEditingController _groomFatherController;
   late TextEditingController _groomMotherController;
+  final _fatherNamesNotifier = ValueNotifier('');
 
   @override
   void initState() {
@@ -37,19 +38,22 @@ class _Step3FamilyState extends State<Step3Family> {
         TextEditingController(text: widget.initialData['groomFamily']?['fatherName']);
     _groomMotherController =
         TextEditingController(text: widget.initialData['groomFamily']?['motherName']);
-    // Repaint the parents-meet preview as the user types into father-name
-    // fields; the static _ParentsMeetSection reads controller text at build
-    // time, so a setState is required to re-render it.
-    _brideFatherController.addListener(_onTextChanged);
-    _groomFatherController.addListener(_onTextChanged);
+    // Sync the father names to the notifier so _ParentsMeetSection can listen
+    // without rebuilding the whole widget on every keystroke.
+    _fatherNamesNotifier.value = '${_groomFatherController.text} & ${_brideFatherController.text}';
+    _groomFatherController.addListener(_updateFatherNames);
+    _brideFatherController.addListener(_updateFatherNames);
   }
 
-  void _onTextChanged() {
-    if (mounted) setState(() {});
+  void _updateFatherNames() {
+    _fatherNamesNotifier.value = '${_groomFatherController.text} & ${_brideFatherController.text}';
   }
 
   @override
   void dispose() {
+    _groomFatherController.removeListener(_updateFatherNames);
+    _brideFatherController.removeListener(_updateFatherNames);
+    _fatherNamesNotifier.dispose();
     _brideFatherController.dispose();
     _brideMotherController.dispose();
     _groomFatherController.dispose();
@@ -117,9 +121,11 @@ class _Step3FamilyState extends State<Step3Family> {
           _buildFamilySection('Groom\'s family', false),
           const SizedBox(height: AppTheme.space8),
           // ─── Parents Meet ────────────────────────────────────
-          _ParentsMeetSection(
-            groomName: _groomFatherController.text,
-            brideName: _brideFatherController.text,
+          ValueListenableBuilder<String>(
+            valueListenable: _fatherNamesNotifier,
+            // Only this section rebuilds on father-name changes;
+            // the text fields keep their cursor and IME state.
+            builder: (_, names, _) => _ParentsMeetSection(combined: names),
           ),
         ],
       ),
@@ -128,9 +134,8 @@ class _Step3FamilyState extends State<Step3Family> {
 }
 
 class _ParentsMeetSection extends StatelessWidget {
-  final String groomName;
-  final String brideName;
-  const _ParentsMeetSection({required this.groomName, required this.brideName});
+  final String combined;
+  const _ParentsMeetSection({required this.combined});
 
   @override
   Widget build(BuildContext context) {
@@ -184,6 +189,26 @@ class _ParentsMeetSection extends StatelessWidget {
                   fontStyle: FontStyle.italic,
                 ),
           ),
+          if (combined.isNotEmpty) ...[
+            const SizedBox(height: AppTheme.space3),
+            Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppTheme.space3,
+                vertical: AppTheme.space2,
+              ),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.6),
+                borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+              ),
+              child: Text(
+                'Preview: $combined',
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: AppColors.slate700,
+                      fontWeight: FontWeight.w600,
+                    ),
+              ),
+            ),
+          ],
         ],
       ),
     );
