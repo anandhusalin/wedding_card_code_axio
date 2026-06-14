@@ -133,14 +133,16 @@
     letter-spacing: 0.1em; text-transform: uppercase;
   }
   .royal-maroon-template .wsec-family-photo-frame {
-    width: 190px; height: 190px; margin: 0 auto 20px; overflow: hidden;
+    width: clamp(120px, 22vw, 190px); height: clamp(120px, 22vw, 190px);
+    margin: 0 auto 20px; overflow: hidden;
     background: var(--rm-bg); border: 2px solid var(--rm-gold); padding: 4px;
   }
   .royal-maroon-template .wsec-family-photo-frame img { width: 100%; height: 100%; object-fit: cover; }
   .royal-maroon-template .wsec-family-avatar {
-    width: 190px; height: 190px; margin: 0 auto 20px;
+    width: clamp(120px, 22vw, 190px); height: clamp(120px, 22vw, 190px);
+    margin: 0 auto 20px;
     background: var(--rm-primary); color: var(--rm-gold); display: grid; place-items: center;
-    font-family: 'Cinzel', serif; font-size: 4rem; font-weight: 500; border: 2px solid var(--rm-gold);
+    font-family: 'Cinzel', serif; font-size: clamp(2.4rem, 5vw, 4rem); font-weight: 500; border: 2px solid var(--rm-gold);
   }
   .royal-maroon-template .wsec-family-list { list-style: none; padding: 0; margin: 0; }
   .royal-maroon-template .wsec-family-list li { padding: 8px 0; }
@@ -255,13 +257,55 @@
   .royal-maroon-template .wsec-gift-value .wsec-icon { width: 16px; height: 16px; color: var(--rm-muted); }
   .royal-maroon-template .wsec-gift-note { color: var(--rm-muted); font-size: 0.9rem; margin: 8px 0 0; font-style: italic; }
 
-  /* RSVP */
-  .royal-maroon-template .wsec-rsvp { background: var(--rm-primary-dark); color: var(--rm-cream); text-align: center; }
-  .royal-maroon-template .wsec-rsvp-title {
-    font-family: 'Cinzel', serif; font-weight: 500; font-size: clamp(1.6rem, 3.5vw, 2.6rem);
-    margin: 0 0 12px; color: var(--rm-gold); letter-spacing: 0.15em; text-transform: uppercase;
+  /* WISHES */
+  .royal-maroon-template .wsec-wishes { background: var(--rm-primary-dark); color: var(--rm-cream); }
+  .royal-maroon-template .wsec-wishes-sub { text-align: center; color: rgba(250,241,224,0.85); max-width: 540px; margin: 0 auto 32px; }
+  .royal-maroon-template .wsec-wishes-form { max-width: 560px; margin: 0 auto 56px; display: grid; gap: 14px; }
+  .royal-maroon-template .wsec-wishes-field { display: block; }
+  .royal-maroon-template .wsec-wishes-label {
+    display: block; font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 3px;
+    text-transform: uppercase; color: var(--rm-gold); margin-bottom: 8px;
   }
-  .royal-maroon-template .wsec-rsvp-sub { color: rgba(250,241,224,0.8); margin: 0 0 32px; }
+  .royal-maroon-template .wsec-wishes-form input,
+  .royal-maroon-template .wsec-wishes-form textarea {
+    width: 100%; padding: 14px 16px; border: 1px solid var(--rm-gold);
+    border-radius: 0; background: rgba(250,241,224,0.08); color: var(--rm-cream);
+    font-family: 'Cormorant Garamond', serif; font-size: 16px;
+  }
+  .royal-maroon-template .wsec-wishes-form input::placeholder,
+  .royal-maroon-template .wsec-wishes-form textarea::placeholder { color: rgba(250,241,224,0.5); }
+  .royal-maroon-template .wsec-wishes-form input:focus,
+  .royal-maroon-template .wsec-wishes-form textarea:focus {
+    outline: none; background: rgba(250,241,224,0.14); box-shadow: 0 0 0 2px var(--rm-gold);
+  }
+  .royal-maroon-template .wsec-wishes-form textarea { resize: vertical; min-height: 90px; }
+  .royal-maroon-template .wsec-wishes-counter { text-align: right; font-size: 11px; color: rgba(250,241,224,0.6); margin: -8px 4px 0; }
+  .royal-maroon-template .wsec-wishes-submit {
+    background: var(--rm-gold); color: var(--rm-primary-dark); border: 1px solid var(--rm-gold);
+    border-radius: 0; width: 100%; justify-content: center;
+    font-family: 'Cinzel', serif; letter-spacing: 0.2em;
+  }
+  .royal-maroon-template .wsec-wishes-submit:hover { background: transparent; color: var(--rm-gold); }
+  .royal-maroon-template .wsec-wishes-status { text-align: center; font-size: 13px; margin: 8px 0 0; min-height: 1em; }
+  .royal-maroon-template .wsec-wishes-status.is-success { color: var(--rm-gold); font-weight: 600; }
+  .royal-maroon-template .wsec-wishes-status.is-error { color: #FFD7D7; }
+  .royal-maroon-template .wsec-wishes-list-wrap { max-width: 720px; margin: 0 auto; }
+  .royal-maroon-template .wsec-wishes-list-heading {
+    font-family: 'Cinzel', serif; font-size: clamp(1.4rem, 3vw, 1.8rem);
+    color: var(--rm-gold); text-align: center; margin: 0 0 24px; letter-spacing: 0.1em;
+  }
+  .royal-maroon-template .wsec-wishes-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 14px; }
+  .royal-maroon-template .wsec-wishes-item {
+    background: rgba(250,241,224,0.06); border: 1px solid var(--rm-gold); padding: 18px 20px;
+    color: var(--rm-cream);
+  }
+  .royal-maroon-template .wsec-wishes-msg {
+    font-family: 'Cormorant Garamond', serif; font-size: 1.2rem; font-style: italic;
+    line-height: 1.5; margin-bottom: 8px;
+  }
+  .royal-maroon-template .wsec-wishes-meta { display: flex; gap: 10px; align-items: center; font-size: 12px; color: var(--rm-gold); }
+  .royal-maroon-template .wsec-wishes-name { font-family: 'Cinzel', serif; letter-spacing: 0.08em; }
+  .royal-maroon-template .wsec-wishes-empty { text-align: center; color: rgba(250,241,224,0.7); padding: 16px 0; }
 
   /* BUTTONS */
   .royal-maroon-template .wsec-btn {
@@ -295,6 +339,7 @@
   .royal-maroon-template .wsec-music-toggle .wsec-icon { width: 22px; height: 22px; }
 
   /* RESPONSIVE */
+  /* Tablet (≤900px): single-column couple + family, 2-col gallery. */
   @media (max-width: 900px) {
     .royal-maroon-template .wsec-hero-inner { padding: 48px 28px; }
     .royal-maroon-template .wsec-couple-grid { grid-template-columns: 1fr; gap: 32px; }
@@ -303,10 +348,23 @@
     .royal-maroon-template .wsec-family-divider { display: none; }
     .royal-maroon-template .wsec-gallery-grid { grid-template-columns: repeat(2, 1fr); }
     .royal-maroon-template .wsec-travel-layout { grid-template-columns: 1fr; }
+    /* Timeline marker column is fixed at 60px; collapse on tablet so the
+       marker line doesn't dominate. */
+    .royal-maroon-template .wsec-timeline-item { grid-template-columns: 40px 1fr; gap: 14px; }
+  }
+  /* Small phone (≤640px): tighter hero text + countdown. */
+  @media (max-width: 640px) {
+    .royal-maroon-template .wsec-cd-cell { padding: 10px 12px; min-width: 64px; }
+    .royal-maroon-template .wsec-cd-num { font-size: 1.8rem; }
   }
   @media (max-width: 480px) {
+    .royal-maroon-template .wsec-hero-inner { padding: 40px 18px; }
     .royal-maroon-template .wsec-gallery-grid { grid-template-columns: 1fr; }
-    .royal-maroon-template .wsec-event-card { padding: 40px 24px; }
+    .royal-maroon-template .wsec-event-card { padding: 36px 20px; }
+    .royal-maroon-template .wsec-timeline-item { grid-template-columns: 1fr; gap: 8px; }
+    .royal-maroon-template .wsec-wishes-form { padding: 0 4px; }
+    .royal-maroon-template .wsec-wishes-form input,
+    .royal-maroon-template .wsec-wishes-form textarea { font-size: 16px; }
   }
 </style>
 
@@ -320,7 +378,7 @@
     <%- include('../partials/sections/_gallery', { wedding }) %>
     <%- include('../partials/sections/_travel', { wedding }) %>
     <%- include('../partials/sections/_gift', { wedding }) %>
-    <%- include('../partials/sections/_rsvp-cta', { wedding }) %>
+    <%- include('../partials/sections/_wishes', { wedding }) %>
   </main>
 
   <%- include('../partials/sections/_footer', { wedding }) %>

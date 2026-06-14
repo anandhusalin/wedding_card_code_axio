@@ -99,7 +99,7 @@ img { max-width: 100%; display: block; }
 .wsec-share-rail a:hover { transform: scale(1.1); }
 .wsec-share-rail a.is-copied { transform: scale(0.95); }
 .wsec-share-rail a .wsec-icon { width: 18px; height: 18px; }
-@media (max-width: 768px) { .wsec-share-rail { display: none; } }
+/* (share-rail hide rule moved to the responsive block below) */
 
 /* ---------- Music toggle shell ---------- */
 .wsec-music-toggle {
@@ -303,7 +303,24 @@ dialog.lightbox::backdrop { background: rgba(0, 0, 0, 0.88); }
 }
 
 /* ---------- Generic responsive ---------- */
+/* Tablet: 769–1024px — share rail covers content, hide it. */
+@media (max-width: 1024px) {
+  .wsec-share-rail { display: none; }
+}
+/* Phone: shrink h1/h2 a notch. */
 @media (max-width: 768px) {
   h1 { font-size: 44px; }
   h2 { font-size: 32px; }
+  body { font-size: 16px; }
+  .wsec-container { padding: 0 20px; }
+}
+/* Small phone: tighten lightbox + modal padding. */
+@media (max-width: 480px) {
+  h1 { font-size: 36px; }
+  h2 { font-size: 26px; }
+  .lightbox-close { top: 12px; right: 12px; width: 40px; height: 40px; }
+  .lightbox-prev { left: 8px; }
+  .lightbox-next { right: 8px; }
+  .modal-content { padding: 28px 20px 24px; }
+  .modal-content h2 { font-size: 22px; }
 }

@@ -65,12 +65,21 @@ describe('Responsive — each template has tablet + mobile breakpoints', () => {
   });
 });
 
-describe('Responsive — base stylesheet hides share rail on mobile', () => {
+describe('Responsive — base stylesheet hides share rail on tablet', () => {
   const baseCss = fs.readFileSync(
     path.join(__dirname, '..', 'src', 'public', 'css', 'style.css'),
     'utf8'
   );
-  test('share rail hidden on screens ≤ 768px', () => {
-    expect(baseCss).toMatch(/@media\s*\(\s*max-width:\s*768px\s*\)\s*\{[\s\S]*?wsec-share-rail[\s\S]*?display:\s*none/);
+  test('share rail hidden on screens ≤ 1024px', () => {
+    expect(baseCss).toMatch(/@media\s*\(\s*max-width:\s*1024px\s*\)\s*\{[\s\S]*?wsec-share-rail[\s\S]*?display:\s*none/);
+  });
+  test('base font-size reduced on mobile', () => {
+    expect(baseCss).toMatch(/@media\s*\(\s*max-width:\s*768px\s*\)\s*\{[\s\S]*?font-size:\s*16px/);
+  });
+  test('lightbox controls shrink on small phone', () => {
+    expect(baseCss).toMatch(/@media\s*\(\s*max-width:\s*480px\s*\)\s*\{[\s\S]*?lightbox-close[\s\S]*?width:\s*40px/);
+  });
+  test('modal padding reduced on small phone', () => {
+    expect(baseCss).toMatch(/@media\s*\(\s*max-width:\s*480px\s*\)\s*\{[\s\S]*?\.modal-content[\s\S]*?padding:\s*28px/);
   });
 });

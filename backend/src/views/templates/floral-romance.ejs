@@ -113,14 +113,16 @@
     font-family: 'Dancing Script', cursive; font-size: 1.8rem; margin: 0 0 24px; color: var(--fr-primary);
   }
   .floral-romance-template .wsec-family-photo-frame {
-    width: 180px; height: 180px; border-radius: 50%; margin: 0 auto 20px; overflow: hidden;
+    width: clamp(120px, 22vw, 180px); height: clamp(120px, 22vw, 180px);
+    border-radius: 50%; margin: 0 auto 20px; overflow: hidden;
     background: var(--fr-blush); padding: 8px;
   }
   .floral-romance-template .wsec-family-photo-frame img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
   .floral-romance-template .wsec-family-avatar {
-    width: 180px; height: 180px; border-radius: 50%; margin: 0 auto 20px;
+    width: clamp(120px, 22vw, 180px); height: clamp(120px, 22vw, 180px);
+    border-radius: 50%; margin: 0 auto 20px;
     background: var(--fr-blush); color: var(--fr-primary); display: grid; place-items: center;
-    font-family: 'Dancing Script', cursive; font-size: 4rem;
+    font-family: 'Dancing Script', cursive; font-size: clamp(2.6rem, 5vw, 4rem);
   }
   .floral-romance-template .wsec-family-list { list-style: none; padding: 0; margin: 0; }
   .floral-romance-template .wsec-family-list li { padding: 6px 0; }
@@ -227,10 +229,48 @@
   .floral-romance-template .wsec-gift-value .wsec-icon { width: 16px; height: 16px; color: var(--fr-muted); }
   .floral-romance-template .wsec-gift-note { color: var(--fr-muted); font-size: 0.9rem; margin: 8px 0 0; }
 
-  /* RSVP */
-  .floral-romance-template .wsec-rsvp { background: var(--fr-secondary); color: var(--fr-bg); text-align: center; }
-  .floral-romance-template .wsec-rsvp-title { font-family: 'Dancing Script', cursive; font-size: clamp(2.6rem, 5.5vw, 4rem); margin: 0 0 12px; color: var(--fr-bg); }
-  .floral-romance-template .wsec-rsvp-sub { color: rgba(255,255,255,0.9); margin: 0 0 32px; }
+  /* WISHES */
+  .floral-romance-template .wsec-wishes { background: var(--fr-secondary); color: var(--fr-bg); }
+  .floral-romance-template .wsec-wishes-sub { text-align: center; color: rgba(255,255,255,0.9); max-width: 540px; margin: 0 auto 32px; }
+  .floral-romance-template .wsec-wishes-form {
+    max-width: 560px; margin: 0 auto 56px; display: grid; gap: 14px;
+  }
+  .floral-romance-template .wsec-wishes-field { display: block; }
+  .floral-romance-template .wsec-wishes-label {
+    display: block; font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
+    color: rgba(255,255,255,0.85); margin-bottom: 8px; font-weight: 500;
+  }
+  .floral-romance-template .wsec-wishes-form input,
+  .floral-romance-template .wsec-wishes-form textarea {
+    width: 100%; padding: 14px 16px; border: 1px solid rgba(255,255,255,0.35);
+    border-radius: 8px; background: rgba(255,255,255,0.92); color: var(--fr-ink);
+    font-family: inherit; font-size: 15px;
+  }
+  .floral-romance-template .wsec-wishes-form input:focus,
+  .floral-romance-template .wsec-wishes-form textarea:focus {
+    outline: none; border-color: var(--fr-bg); box-shadow: 0 0 0 3px rgba(255,255,255,0.3);
+  }
+  .floral-romance-template .wsec-wishes-form textarea { resize: vertical; min-height: 90px; }
+  .floral-romance-template .wsec-wishes-counter { text-align: right; font-size: 11px; color: rgba(255,255,255,0.7); margin: -8px 4px 0; }
+  .floral-romance-template .wsec-wishes-submit { background: var(--fr-bg); color: var(--fr-primary); border-color: var(--fr-bg); width: 100%; justify-content: center; }
+  .floral-romance-template .wsec-wishes-submit:hover { background: var(--fr-primary); color: var(--fr-bg); border-color: var(--fr-primary); }
+  .floral-romance-template .wsec-wishes-status { text-align: center; font-size: 13px; margin: 8px 0 0; min-height: 1em; }
+  .floral-romance-template .wsec-wishes-status.is-success { color: var(--fr-bg); font-weight: 600; }
+  .floral-romance-template .wsec-wishes-status.is-error { color: #FFE5E5; }
+  .floral-romance-template .wsec-wishes-list-wrap { max-width: 720px; margin: 0 auto; }
+  .floral-romance-template .wsec-wishes-list-heading {
+    font-family: 'Dancing Script', cursive; font-size: clamp(1.6rem, 3.5vw, 2.2rem);
+    color: var(--fr-bg); text-align: center; margin: 0 0 24px;
+  }
+  .floral-romance-template .wsec-wishes-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 14px; }
+  .floral-romance-template .wsec-wishes-item {
+    background: rgba(255,255,255,0.92); border-radius: 8px; padding: 18px 20px;
+    color: var(--fr-ink);
+  }
+  .floral-romance-template .wsec-wishes-msg { font-family: 'Dancing Script', cursive; font-size: 1.2rem; line-height: 1.4; margin-bottom: 8px; }
+  .floral-romance-template .wsec-wishes-meta { display: flex; gap: 10px; align-items: center; font-size: 12px; color: var(--fr-muted); }
+  .floral-romance-template .wsec-wishes-name { font-weight: 600; }
+  .floral-romance-template .wsec-wishes-empty { text-align: center; color: rgba(255,255,255,0.85); padding: 16px 0; }
 
   /* BUTTONS */
   .floral-romance-template .wsec-btn {
@@ -265,6 +305,7 @@
   .floral-romance-template .wsec-music-toggle .wsec-icon { width: 22px; height: 22px; }
 
   /* RESPONSIVE */
+  /* Tablet (≤900px): single-column couple + family, 2-col gallery. */
   @media (max-width: 900px) {
     .floral-romance-template .wsec-hero-inner { padding: 48px 24px; }
     .floral-romance-template .wsec-couple-grid { grid-template-columns: 1fr; gap: 32px; }
@@ -274,9 +315,19 @@
     .floral-romance-template .wsec-gallery-grid { grid-template-columns: repeat(2, 1fr); }
     .floral-romance-template .wsec-travel-layout { grid-template-columns: 1fr; }
   }
+  /* Small phone (≤480px): 1-col gallery, tighter card padding, smaller hero text. */
+  @media (max-width: 640px) {
+    .floral-romance-template .wsec-names { font-size: clamp(2.4rem, 9vw, 3.2rem); }
+    .floral-romance-template .wsec-cd-cell { padding: 10px 12px; min-width: 64px; }
+    .floral-romance-template .wsec-cd-num { font-size: 1.8rem; }
+  }
   @media (max-width: 480px) {
+    .floral-romance-template .wsec-hero-inner { padding: 40px 18px; }
     .floral-romance-template .wsec-gallery-grid { grid-template-columns: 1fr; }
-    .floral-romance-template .wsec-event-card { padding: 36px 24px; }
+    .floral-romance-template .wsec-event-card { padding: 32px 20px; }
+    .floral-romance-template .wsec-wishes-form { padding: 0 4px; }
+    .floral-romance-template .wsec-wishes-form input,
+    .floral-romance-template .wsec-wishes-form textarea { font-size: 16px; } /* avoid iOS zoom */
   }
 </style>
 
@@ -290,7 +341,7 @@
     <%- include('../partials/sections/_gallery', { wedding }) %>
     <%- include('../partials/sections/_travel', { wedding }) %>
     <%- include('../partials/sections/_gift', { wedding }) %>
-    <%- include('../partials/sections/_rsvp-cta', { wedding }) %>
+    <%- include('../partials/sections/_wishes', { wedding }) %>
   </main>
 
   <%- include('../partials/sections/_footer', { wedding }) %>

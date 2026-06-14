@@ -1,0 +1,53 @@
+<%
+  // _wishes.ejs — Public guestbook ("Leave a wish").
+  // Distinct from RSVP: a short free-form note. Renders an empty
+  // shell; the JS component (`wishes.js`) injects the list.
+  // The wedding id is exposed via data-* so the JS can POST/GET
+  // without needing to parse the DOM.
+%>
+<section class="wsec wsec-wishes" data-section="wishes" data-wedding-id="<%= wedding._id || wedding.id %>">
+  <div class="wsec-container">
+    <h2 class="wsec-eyebrow-heading gs-reveal">Leave a Wish</h2>
+    <p class="wsec-wishes-sub gs-reveal">Share your love and best wishes for the couple.</p>
+
+    <form class="wsec-wishes-form gs-reveal" novalidate>
+      <div class="wsec-wishes-row">
+        <label class="wsec-wishes-field">
+          <span class="wsec-wishes-label">Your name</span>
+          <input
+            type="text"
+            name="guestName"
+            maxlength="60"
+            required
+            placeholder="e.g. Maya &amp; Arjun"
+            autocomplete="name"
+          />
+        </label>
+      </div>
+      <label class="wsec-wishes-field">
+        <span class="wsec-wishes-label">Your message</span>
+        <textarea
+          name="message"
+          maxlength="300"
+          rows="3"
+          required
+          placeholder="Wishing you a lifetime of happiness…"
+        ></textarea>
+      </label>
+      <p class="wsec-wishes-counter" aria-live="polite">
+        <span class="wsec-wishes-count">0</span> / 300
+      </p>
+      <button type="submit" class="wsec-btn wsec-btn-primary wsec-wishes-submit">
+        Send your wish
+      </button>
+      <p class="wsec-wishes-status" role="status" aria-live="polite"></p>
+    </form>
+
+    <div class="wsec-wishes-list-wrap gs-reveal">
+      <h3 class="wsec-wishes-list-heading">Recent wishes</h3>
+      <ul class="wsec-wishes-list" aria-live="polite">
+        <li class="wsec-wishes-empty">Be the first to leave a wish ✨</li>
+      </ul>
+    </div>
+  </div>
+</section>

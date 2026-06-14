@@ -14,6 +14,7 @@ const errorHandler = require('./middlewares/errorHandler');
 const authRoutes = require('./routes/auth.routes');
 const weddingRoutes = require('./routes/wedding.routes');
 const rsvpRoutes = require('./routes/rsvp.routes');
+const wishRoutes = require('./routes/wish.routes');
 const uploadRoutes = require('./routes/upload.routes');
 
 // Wedding service for public slug route
@@ -101,6 +102,7 @@ app.get('/api/v1/health', (req, res) => {
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/weddings', weddingRoutes);
 app.use('/api/v1/rsvp', rsvpRoutes);
+app.use('/api/v1/wishes', wishRoutes);
 app.use('/api/v1/upload', uploadRoutes);
 
 // ────────────────────────────────────────────
