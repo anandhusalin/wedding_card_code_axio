@@ -29,7 +29,36 @@ class _Step6PublishState extends ConsumerState<Step6Publish> {
   bool _isLoading = false;
   Wedding? _publishedWedding;
 
+  /// Check that the minimum required fields are populated. If not, returns
+  /// a user-friendly error message; otherwise null.
+  String? _validateRequired() {
+    final data = widget.weddingData;
+    if ((data['groomName'] as String?)?.trim().isNotEmpty != true) {
+      return 'Please enter the groom\'s name in Step 1.';
+    }
+    if ((data['brideName'] as String?)?.trim().isNotEmpty != true) {
+      return 'Please enter the bride\'s name in Step 1.';
+    }
+    if (data['weddingDate'] == null) {
+      return 'Please pick a wedding date in Step 2.';
+    }
+    final venue = data['venue'];
+    if (venue is Map &&
+        (venue['name'] as String?)?.trim().isNotEmpty != true) {
+      return 'Please add a venue name in Step 2.';
+    }
+    return null;
+  }
+
   Future<void> _publish() async {
+    final validationError = _validateRequired();
+    if (validationError != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(validationError)),
+      );
+      return;
+    }
+
     setState(() => _isLoading = true);
     try {
       final repo = ref.read(weddingRepositoryProvider);
@@ -37,14 +66,11 @@ class _Step6PublishState extends ConsumerState<Step6Publish> {
       final payload = Map<String, dynamic>.from(widget.weddingData);
 
       final rawDate = payload['weddingDate'];
-      if (rawDate == null) {
-        payload['weddingDate'] = DateTime.now().toIso8601String();
-      } else if (rawDate is DateTime) {
+      if (rawDate is DateTime) {
         payload['weddingDate'] = rawDate.toIso8601String();
+      } else if (rawDate is String) {
+        // already serialized, leave as-is
       }
-
-      payload['groomName'] ??= "Groom";
-      payload['brideName'] ??= "Bride";
 
       final created = await repo.createWedding(payload);
       final published = await repo.publishWedding(created.id, true);

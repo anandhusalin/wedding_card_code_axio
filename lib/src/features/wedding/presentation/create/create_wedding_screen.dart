@@ -33,7 +33,12 @@ class _CreateWeddingScreenState extends ConsumerState<CreateWeddingScreen> {
     {'title': 'Publish', 'subtitle': 'Go live!'},
   ];
 
-  void _onStepContinue() {
+  bool _isLoading = false;
+
+  void _onStepContinue() async {
+    // Prevent double-taps and avoid navigating while loading
+    if (_isLoading) return;
+
     // Validate the current step's form (steps 0-3 have forms; 4 and 5 don't)
     if (_currentStep < 4) {
       final form = _formKey.currentState;
@@ -43,7 +48,12 @@ class _CreateWeddingScreenState extends ConsumerState<CreateWeddingScreen> {
       }
     }
     if (_currentStep < 5) {
-      setState(() => _currentStep += 1);
+      setState(() => _isLoading = true);
+      try {
+        setState(() => _currentStep += 1);
+      } finally {
+        setState(() => _isLoading = false);
+      }
     }
   }
 
@@ -53,8 +63,52 @@ class _CreateWeddingScreenState extends ConsumerState<CreateWeddingScreen> {
     }
   }
 
+  /// Confirm before discarding progress.
+  Future<bool> _confirmDiscard() async {
+    // Don't prompt if user hasn't entered anything yet
+    if (_weddingData.isEmpty) return true;
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Discard progress?'),
+        content: const Text(
+          'You will lose any data you have entered so far. This cannot be undone.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Keep editing'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            style: FilledButton.styleFrom(
+              backgroundColor: Theme.of(ctx).colorScheme.error,
+            ),
+            child: const Text('Discard'),
+          ),
+        ],
+      ),
+    );
+    return result ?? false;
+  }
+
   void _updateData(Map<String, dynamic> data) {
-    setState(() => _weddingData.addAll(data));
+    setState(() {
+      // Deep merge to avoid overwriting nested maps
+      data.forEach((key, value) {
+        if (value is Map) {
+          // Merge nested maps instead of replacing
+          final existing = _weddingData[key];
+          if (existing is Map) {
+            _weddingData[key] = {...existing, ...value};
+          } else {
+            _weddingData[key] = value;
+          }
+        } else {
+          _weddingData[key] = value;
+        }
+      });
+    });
   }
 
   Widget _buildStepContent() {
@@ -103,7 +157,11 @@ class _CreateWeddingScreenState extends ConsumerState<CreateWeddingScreen> {
         title: const Text('Create Wedding'),
         leading: IconButton(
           icon: const Icon(Icons.close_rounded),
-          onPressed: () => context.go('/'),
+          onPressed: () async {
+            if (await _confirmDiscard() && context.mounted) {
+              context.go('/');
+            }
+          },
         ),
       ),
       body: Column(
@@ -251,10 +309,19 @@ class _CreateWeddingScreenState extends ConsumerState<CreateWeddingScreen> {
                   Expanded(
                     flex: _currentStep > 0 ? 2 : 1,
                     child: FilledButton(
-                      onPressed: _onStepContinue,
-                      child: Text(
-                        _currentStep == 5 ? 'Publish Wedding' : 'Continue',
-                      ),
+                      onPressed: _isLoading ? null : _onStepContinue,
+                      child: _isLoading
+                          ? const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Colors.white,
+                              ),
+                            )
+                          : Text(
+                              _currentStep == 5 ? 'Publish Wedding' : 'Continue',
+                            ),
                     ),
                   ),
                 ],

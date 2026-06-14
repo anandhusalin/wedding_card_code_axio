@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:pretty_qr_code/pretty_qr_code.dart';
 import 'package:share_plus/share_plus.dart';
@@ -55,8 +56,14 @@ class MyWeddingsScreen extends ConsumerWidget {
           return RefreshIndicator(
             color: Theme.of(context).colorScheme.primary,
             onRefresh: () async {
-              ref.invalidate(weddingListControllerProvider);
-              await Future<void>.delayed(const Duration(milliseconds: 500));
+              try {
+                await ref
+                    .read(weddingListControllerProvider.notifier)
+                    .refresh();
+              } catch (_) {
+                // Errors are surfaced via the AsyncError state above;
+                // the spinner just stops when the future resolves.
+              }
             },
             child: LayoutBuilder(
               builder: (context, constraints) {
@@ -76,9 +83,7 @@ class MyWeddingsScreen extends ConsumerWidget {
                         WeddingCardWidget(wedding: weddings[index]),
                   );
                 }
-                final width = constraints.maxWidth;
                 final gap = AppTheme.space3;
-                final cardWidth = (width - gap * (cols - 1)) / cols;
                 return GridView.builder(
                   padding: EdgeInsets.fromLTRB(
                     Responsive.pagePadding(context),
@@ -91,7 +96,6 @@ class MyWeddingsScreen extends ConsumerWidget {
                     crossAxisSpacing: gap,
                     mainAxisSpacing: gap,
                     childAspectRatio: 0.78,
-                    mainAxisExtent: cardWidth * 1.3,
                   ),
                   itemCount: weddings.length,
                   itemBuilder: (context, index) =>
@@ -236,7 +240,7 @@ class WeddingCardWidget extends ConsumerWidget {
       borderRadius: BorderRadius.circular(AppTheme.radiusXl),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
-        onTap: () {},
+        onTap: () => _openPreview(context),
         child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(AppTheme.radiusXl),
@@ -346,7 +350,7 @@ class WeddingCardWidget extends ConsumerWidget {
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          wedding.weddingDate.toIso8601String().split('T')[0],
+                          DateFormat.yMMMd().format(wedding.weddingDate),
                           style: Theme.of(context).textTheme.bodySmall,
                         ),
                         const SizedBox(width: AppTheme.space3),

@@ -37,6 +37,15 @@ class _Step3FamilyState extends State<Step3Family> {
         TextEditingController(text: widget.initialData['groomFamily']?['fatherName']);
     _groomMotherController =
         TextEditingController(text: widget.initialData['groomFamily']?['motherName']);
+    // Repaint the parents-meet preview as the user types into father-name
+    // fields; the static _ParentsMeetSection reads controller text at build
+    // time, so a setState is required to re-render it.
+    _brideFatherController.addListener(_onTextChanged);
+    _groomFatherController.addListener(_onTextChanged);
+  }
+
+  void _onTextChanged() {
+    if (mounted) setState(() {});
   }
 
   @override

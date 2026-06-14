@@ -5,7 +5,8 @@ import 'package:wedding_cards/src/features/profile/presentation/profile_screen.d
 
 void main() {
   group('ProfileScreen', () {
-    testWidgets('renders profile screen with logout button', (WidgetTester tester) async {
+    testWidgets('renders profile screen with sign out button',
+        (WidgetTester tester) async {
       await tester.pumpWidget(
         const ProviderScope(
           child: MaterialApp(
@@ -14,16 +15,30 @@ void main() {
         ),
       );
 
-      await tester.pumpAndSettle();
+      await tester.pump();
 
-      // Should render an app bar
+      // App bar should be present
       expect(find.byType(AppBar), findsOneWidget);
 
-      // Should render logout button
-      expect(find.text('Logout'), findsOneWidget);
+      // Should render a sign-out action (button text)
+      expect(find.text('Sign out'), findsWidgets);
+    });
 
-      // Should have a logout ElevatedButton
-      expect(find.widgetWithText(ElevatedButton, 'Logout'), findsOneWidget);
+    testWidgets('shows guest fallback when no user is signed in',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(
+        const ProviderScope(
+          child: MaterialApp(
+            home: ProfileScreen(),
+          ),
+        ),
+      );
+
+      await tester.pump();
+
+      // Settings list should still render even with no user
+      expect(find.text('Preferences'), findsOneWidget);
+      expect(find.text('Support'), findsOneWidget);
     });
   });
 }

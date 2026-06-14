@@ -88,9 +88,31 @@ class _Step1CoupleInfoState extends ConsumerState<Step1CoupleInfo> {
           if (type == 'couple') _couplePhotoUrl = urls.first;
         });
         _save();
+      } else {
+        // Backend returned no URL — treat as failure, clear the local path
+        // so the UI doesn't show a phantom image.
+        if (mounted) {
+          setState(() {
+            if (type == 'groom') _groomPhotoPath = null;
+            if (type == 'bride') _bridePhotoPath = null;
+            if (type == 'couple') _couplePhotoPath = null;
+          });
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+                content: Text('Upload failed: no URL returned by server')),
+          );
+        }
       }
     } catch (e) {
+      // Upload failed — clear the local path so we don't show a phantom
+      // image. Don't lose the previous remote URL (if any) so the user
+      // can keep their prior photo.
       if (mounted) {
+        setState(() {
+          if (type == 'groom') _groomPhotoPath = null;
+          if (type == 'bride') _bridePhotoPath = null;
+          if (type == 'couple') _couplePhotoPath = null;
+        });
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Upload failed: $e')),
         );

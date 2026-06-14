@@ -4,6 +4,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/app_text_field.dart';
 import '../../../../core/utils/validators.dart';
+import '../../../../core/utils/responsive.dart';
 import '../../../../core/utils/image_picker_service.dart';
 import '../../data/wedding_repository.dart';
 
@@ -26,7 +27,8 @@ class Step4Story extends ConsumerStatefulWidget {
 class _Step4StoryState extends ConsumerState<Step4Story> {
   late TextEditingController _storyController;
 
-  final List<String> _galleryPhotosLocal = [];
+  // Only the remote URLs (after upload) are displayed; the local paths are
+  // a transient upload state and not kept around once `_save` fires.
   List<Map<String, dynamic>> _galleryPhotosRemote = [];
   bool _isUploading = false;
 
@@ -59,16 +61,18 @@ class _Step4StoryState extends ConsumerState<Step4Story> {
 
     if (paths.isEmpty) return;
 
-    setState(() {
-      _galleryPhotosLocal.addAll(paths);
-      _isUploading = true;
-    });
+    setState(() => _isUploading = true);
 
     try {
       final repo = ref.read(weddingRepositoryProvider);
       final urls = await repo.uploadImages(paths);
 
-      final newPhotos = urls.map((url) => {'url': url, 'order': 0}).toList();
+      // Assign each photo an incremental order so the backend can sort them.
+      final newPhotos = urls
+          .asMap()
+          .entries
+          .map((e) => {'url': e.value, 'order': e.key + _galleryPhotosRemote.length})
+          .toList();
 
       setState(() {
         _galleryPhotosRemote.addAll(newPhotos);
@@ -155,21 +159,30 @@ class _Step4StoryState extends ConsumerState<Step4Story> {
             GridView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: Responsive.gridColumns(context),
                 crossAxisSpacing: 8,
                 mainAxisSpacing: 8,
+                childAspectRatio: 1.0,
               ),
               itemCount: _galleryPhotosRemote.length,
               itemBuilder: (context, index) {
                 return Stack(
                   children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                        image: DecorationImage(
-                          image: NetworkImage(_galleryPhotosRemote[index]['url']),
-                          fit: BoxFit.cover,
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                      child: Image.network(
+                        _galleryPhotosRemote[index]['url'],
+                        fit: BoxFit.cover,
+                        // No width/height here — the grid cell sizes us.
+                        errorBuilder: (_, _, _) => Container(
+                          color: AppColors.slate100,
+                          child: const Center(
+                            child: Icon(
+                              Icons.broken_image_rounded,
+                              color: AppColors.slate400,
+                            ),
+                          ),
                         ),
                       ),
                     ),

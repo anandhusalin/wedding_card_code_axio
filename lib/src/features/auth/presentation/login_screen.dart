@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/network/api_exception.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/utils/responsive.dart';
@@ -32,11 +33,30 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     super.dispose();
   }
 
+  bool _isSubmitting = false;
+
   void _submit() {
+    // Guard against double-tap: button widget is also disabled while
+    // authState.isLoading, but a fast double-tap can race the state update.
+    if (_isSubmitting) return;
     if (!_formKey.currentState!.validate()) return;
+
+    setState(() => _isSubmitting = true);
     HapticFeedback.lightImpact();
     final email = _emailController.text.trim();
     final password = _passwordController.text;
+
+    // Listen for the state transition to loading->data/error to release
+    // the guard. We use a one-shot listener so we don't leak subscriptions.
+    ref.listenManual<AsyncValue<dynamic>>(
+      authControllerProvider,
+      (prev, next) {
+        if (next.isLoading == false && mounted) {
+          setState(() => _isSubmitting = false);
+        }
+      },
+    );
+
     if (_isLogin) {
       ref.read(authControllerProvider.notifier).login(email, password);
     } else {
@@ -53,9 +73,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
     ref.listen(authControllerProvider, (previous, next) {
       if (next is AsyncError) {
+        final error = next.error;
+        final message = error is ApiException
+            ? error.message
+            : 'An unexpected error occurred. Please try again.';
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(next.error.toString()),
+            content: Text(message),
             backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );
@@ -240,9 +264,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                 const SizedBox(height: AppTheme.space6),
 
                                 PrimaryButton(
-                                  onPressed: _submit,
+                                  onPressed: (isLoading || _isSubmitting) ? null : _submit,
                                   label: _isLogin ? 'Sign in' : 'Create account',
-                                  isLoading: isLoading,
+                                  isLoading: isLoading || _isSubmitting,
                                 ).animate().fadeIn(delay: 300.ms, duration: 400.ms),
                               ],
                             ),
