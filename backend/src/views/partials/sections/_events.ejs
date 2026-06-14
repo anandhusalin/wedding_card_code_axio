@@ -1,0 +1,65 @@
+<%
+  // _events.ejs — timeline (wedding.timeline) or single muhurtham card
+  const hasTimeline = Array.isArray(wedding.timeline) && wedding.timeline.length > 0;
+  const dateObj = wedding.weddingDate ? new Date(wedding.weddingDate) : null;
+  const shortDate = dateObj
+    ? dateObj.toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' })
+    : '';
+%>
+<section class="wsec wsec-events" data-section="events">
+  <div class="wsec-container">
+    <h2 class="wsec-eyebrow-heading gs-reveal"><%= hasTimeline ? 'Wedding Events' : 'The Wedding' %></h2>
+
+    <% if (hasTimeline) { %>
+      <ol class="wsec-timeline gs-reveal" role="list">
+        <% wedding.timeline.forEach(function (ev, idx) { %>
+          <li class="wsec-timeline-item">
+            <div class="wsec-timeline-marker" aria-hidden="true">
+              <span class="wsec-timeline-num"><%= String(idx + 1).padStart(2, '0') %></span>
+            </div>
+            <div class="wsec-timeline-body">
+              <h3 class="wsec-timeline-title"><%= ev.title || 'Event' %></h3>
+              <% if (ev.date) { %>
+                <p class="wsec-timeline-date">
+                  <svg class="wsec-icon-inline" aria-hidden="true"><use href="#i-calendar"/></svg>
+                  <%= new Date(ev.date).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' }) %>
+                </p>
+              <% } %>
+              <% if (ev.description) { %><p class="wsec-timeline-desc"><%= ev.description %></p><% } %>
+            </div>
+          </li>
+        <% }) %>
+      </ol>
+    <% } else { %>
+      <article class="wsec-event-card gs-reveal">
+        <h3 class="wsec-event-name">Muhurtham</h3>
+        <ul class="wsec-event-info">
+          <% if (shortDate) { %>
+            <li>
+              <svg class="wsec-icon" aria-hidden="true"><use href="#i-calendar"/></svg>
+              <span><%= shortDate %></span>
+            </li>
+          <% } %>
+          <% if (wedding.weddingTime) { %>
+            <li>
+              <svg class="wsec-icon" aria-hidden="true"><use href="#i-clock"/></svg>
+              <span><%= wedding.weddingTime %></span>
+            </li>
+          <% } %>
+          <% if (wedding.venue && (wedding.venue.name || wedding.venue.address)) { %>
+            <li>
+              <svg class="wsec-icon" aria-hidden="true"><use href="#i-pin"/></svg>
+              <span><%= wedding.venue.name %><%= wedding.venue.name && wedding.venue.address ? ' · ' : '' %><%= wedding.venue.address %></span>
+            </li>
+          <% } %>
+        </ul>
+        <% if (wedding.venue && wedding.venue.mapUrl) { %>
+          <a class="wsec-btn wsec-btn-outline" href="<%= wedding.venue.mapUrl %>" target="_blank" rel="noopener">
+            <svg class="wsec-icon" aria-hidden="true"><use href="#i-pin"/></svg>
+            View on Map
+          </a>
+        <% } %>
+      </article>
+    <% } %>
+  </div>
+</section>

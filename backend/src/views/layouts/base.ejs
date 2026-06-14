@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= title %></title>
     <meta name="description" content="<%= description %>">
-    
+
     <!-- Open Graph / Social SEO -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="<%= baseUrl %>/<%= wedding.slug %>">
@@ -13,28 +13,30 @@
     <meta property="og:description" content="<%= description %>">
     <meta property="og:image" content="<%= ogImage %>">
 
-    <!-- Fonts -->
+    <!-- Fonts (preconnect for performance) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <% if (wedding.language === 'ml' || wedding.language === 'en_ml') { %>
-        <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Malayalam:wght@400;600;700&display=swap" rel="stylesheet">
-    <% } %>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 
-    <!-- Core CSS -->
+    <%
+      // Per-template font stack. Each template has its own display+body combo
+      // declared inline in its own <style> block, but we preload the families
+      // here so the browser fetches them in parallel with the document.
+      const fontFamilies = {
+        'traditional-kerala': 'Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@400;500;600',
+        'modern-elegant':     'Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,400&family=Inter:wght@400;500;600',
+        'floral-romance':     'Dancing+Script:wght@400;500;600;700&family=Inter:wght@400;500;600',
+        'royal-maroon':       'Cinzel:wght@400;500;600&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Inter:wght@400;500;600',
+      };
+      const fontHref = fontFamilies[wedding.templateId] || fontFamilies['traditional-kerala'];
+    %>
+    <% if (wedding.language === 'ml' || wedding.language === 'en_ml') { %>
+        <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Malayalam:wght@400;600;700&family=<%= fontHref %>&display=swap" rel="stylesheet">
+    <% } else { %>
+        <link href="https://fonts.googleapis.com/css2?family=<%= fontHref %>&display=swap" rel="stylesheet">
+    <% } %>
+
+    <!-- Base CSS (typography scale, floating UI shell, animations) -->
     <link rel="stylesheet" href="/css/style.css">
-    
-    <style>
-        :root {
-            --primary-color: <%= wedding.theme?.primaryColor || '#D4A574' %>;
-            --font-heading: '<%= wedding.theme?.fontFamily || 'Playfair Display' %>', serif;
-            <% if (wedding.language === 'ml' || wedding.language === 'en_ml') { %>
-                --font-body: 'Noto Sans Malayalam', 'Inter', sans-serif;
-            <% } else { %>
-                --font-body: 'Inter', sans-serif;
-            <% } %>
-        }
-    </style>
 </head>
 <body
     class="template-<%= wedding.templateId %> theme-<%= wedding.theme?.mode || 'light' %>"
@@ -45,7 +47,7 @@
 
     <!-- Free badge for free-tier users (Pro users hide this) -->
     <% if (!wedding.userId || !wedding.userId.plan || wedding.userId.plan === 'free') { %>
-        <div style="text-align: center; padding: 20px; background: #f5f5f5; font-size: 13px;">
+        <div class="wsec-free-badge-wrap">
             <%- include('../partials/free-badge') %>
         </div>
     <% } %>

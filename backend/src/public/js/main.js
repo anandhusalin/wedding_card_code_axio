@@ -17,6 +17,8 @@
     initRsvpModalA11y();
     initMusicToggle();
     initShareRail();
+    initGiftCopy();
+    initScrollCue();
   });
 
   // ---------- Scroll reveal (IntersectionObserver) ----------
@@ -228,6 +230,10 @@
         btn.classList.remove('is-playing');
       }
     });
+
+    // Default icon = music-off (because not yet playing). The partial inlines
+    // the music-on icon; we swap by toggling a class so the template CSS can
+    // hide/show via `[data-playing="true"]` selectors if defined.
   }
 
   // ---------- Floating share rail ----------
@@ -240,21 +246,80 @@
     var fb = 'https://www.facebook.com/sharer/sharer.php?u=' + url;
     var tw = 'https://twitter.com/intent/tweet?text=' + text + '&url=' + url;
     rail.innerHTML = ''
-      + '<a href="' + wa + '" target="_blank" rel="noopener" aria-label="Share on WhatsApp" title="Share on WhatsApp">💬</a>'
-      + '<a href="' + fb + '" target="_blank" rel="noopener" aria-label="Share on Facebook" title="Share on Facebook">f</a>'
-      + '<a href="' + tw + '" target="_blank" rel="noopener" aria-label="Share on Twitter" title="Share on Twitter">𝕏</a>'
-      + '<a href="#" data-share-copy aria-label="Copy link" title="Copy link">🔗</a>';
+      + '<a href="' + wa + '" target="_blank" rel="noopener" aria-label="Share on WhatsApp" title="Share on WhatsApp"><svg class="wsec-icon" aria-hidden="true"><use href="#i-whatsapp"/></svg></a>'
+      + '<a href="' + fb + '" target="_blank" rel="noopener" aria-label="Share on Facebook" title="Share on Facebook"><svg class="wsec-icon" aria-hidden="true"><use href="#i-facebook"/></svg></a>'
+      + '<a href="' + tw + '" target="_blank" rel="noopener" aria-label="Share on Twitter" title="Share on Twitter"><svg class="wsec-icon" aria-hidden="true"><use href="#i-twitter"/></svg></a>'
+      + '<a href="#" data-share-copy aria-label="Copy link" title="Copy link"><svg class="wsec-icon" aria-hidden="true"><use href="#i-link"/></svg></a>';
 
     var copyLink = rail.querySelector('[data-share-copy]');
     if (copyLink) {
       copyLink.addEventListener('click', function (e) {
         e.preventDefault();
-        navigator.clipboard.writeText(window.location.href).then(function () {
-          copyLink.textContent = '✓';
-          setTimeout(function () { copyLink.textContent = '🔗'; }, 1500);
+        copyToClipboard(window.location.href).then(function (ok) {
+          if (!ok) return;
+          copyLink.classList.add('is-copied');
+          setTimeout(function () { copyLink.classList.remove('is-copied'); }, 1500);
         });
       });
     }
+  }
+
+  // ---------- Gift copy-to-clipboard ----------
+  function initGiftCopy() {
+    var buttons = document.querySelectorAll('.wsec-gift-copy');
+    if (!buttons.length) return;
+
+    buttons.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var text = btn.getAttribute('data-copy') || btn.textContent.trim();
+        copyToClipboard(text).then(function (ok) {
+          btn.classList.toggle('is-copied', ok);
+          var original = btn.getAttribute('data-original') || btn.innerHTML;
+          if (!btn.getAttribute('data-original')) btn.setAttribute('data-original', original);
+          if (ok) btn.innerHTML = '<span class="wsec-gift-copied">Copied!</span>';
+          setTimeout(function () {
+            btn.classList.remove('is-copied');
+            btn.innerHTML = btn.getAttribute('data-original');
+          }, 1500);
+        });
+      });
+    });
+  }
+
+  // ---------- Hero scroll-cue ----------
+  function initScrollCue() {
+    var cue = document.querySelector('.wsec-scroll-cue');
+    if (!cue) return;
+    cue.addEventListener('click', function (e) {
+      var target = document.getElementById('wsec-content');
+      if (target) {
+        e.preventDefault();
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  }
+
+  // ---------- Clipboard helper (with fallback) ----------
+  function copyToClipboard(text) {
+    if (navigator.clipboard && window.isSecureContext) {
+      return navigator.clipboard.writeText(text).then(function () { return true; }).catch(function () { return fallback(text); });
+    }
+    return Promise.resolve(fallback(text));
+  }
+
+  function fallback(text) {
+    try {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.setAttribute('readonly', '');
+      ta.style.position = 'absolute';
+      ta.style.left = '-9999px';
+      document.body.appendChild(ta);
+      ta.select();
+      var ok = document.execCommand('copy');
+      document.body.removeChild(ta);
+      return ok;
+    } catch (e) { return false; }
   }
 })();
 

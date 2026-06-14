@@ -1,0 +1,73 @@
+<%
+  // _travel.ejs — venue address, map embed, hotel suggestions
+  const travel = wedding.travel || {};
+  const hotels = Array.isArray(travel.hotels) ? travel.hotels : [];
+  const hasMap = !!(travel.venueMapEmbed || (wedding.venue && wedding.venue.mapUrl));
+  const hasVenueInfo = wedding.venue && (wedding.venue.name || wedding.venue.address || travel.notes);
+  if (!hasMap && !hasVenueInfo && hotels.length === 0) return '';
+%>
+<section class="wsec wsec-travel" data-section="travel">
+  <div class="wsec-container">
+    <h2 class="wsec-eyebrow-heading gs-reveal">Travel &amp; Stay</h2>
+
+    <div class="wsec-travel-layout">
+      <% if (hasVenueInfo) { %>
+        <div class="wsec-travel-venue gs-reveal">
+          <h3 class="wsec-travel-subtitle">
+            <svg class="wsec-icon" aria-hidden="true"><use href="#i-pin"/></svg>
+            Venue
+          </h3>
+          <address class="wsec-travel-address">
+            <% if (wedding.venue && wedding.venue.name) { %>
+              <strong><%= wedding.venue.name %></strong>
+            <% } %>
+            <% if (wedding.venue && wedding.venue.address) { %>
+              <span><%= wedding.venue.address %></span>
+            <% } %>
+            <% if (travel.notes) { %>
+              <span class="wsec-travel-notes"><%= travel.notes %></span>
+            <% } %>
+          </address>
+        </div>
+      <% } %>
+
+      <% if (hasMap) { %>
+        <div class="wsec-travel-map gs-reveal">
+          <iframe
+            src="<%= travel.venueMapEmbed || wedding.venue.mapUrl %>"
+            title="Venue map"
+            loading="lazy"
+            allowfullscreen
+            referrerpolicy="no-referrer-when-downgrade">
+          </iframe>
+        </div>
+      <% } %>
+    </div>
+
+    <% if (hotels.length > 0) { %>
+      <div class="wsec-hotels gs-reveal">
+        <h3 class="wsec-travel-subtitle">
+          <svg class="wsec-icon" aria-hidden="true"><use href="#i-bed"/></svg>
+          Recommended Stays
+        </h3>
+        <ol class="wsec-hotels-list" role="list">
+          <% hotels.forEach(function (h) { %>
+            <li class="wsec-hotel-card">
+              <div class="wsec-hotel-main">
+                <h4 class="wsec-hotel-name"><%= h.name %></h4>
+                <p class="wsec-hotel-address"><%= h.address %></p>
+                <% if (h.distance) { %><p class="wsec-hotel-distance"><svg class="wsec-icon wsec-icon-sm" aria-hidden="true"><use href="#i-pin"/></svg> <%= h.distance %> from venue</p><% } %>
+              </div>
+              <% if (h.phone) { %>
+                <a class="wsec-btn wsec-btn-ghost" href="tel:<%= h.phone %>">
+                  <svg class="wsec-icon" aria-hidden="true"><use href="#i-phone"/></svg>
+                  Call
+                </a>
+              <% } %>
+            </li>
+          <% }) %>
+        </ol>
+      </div>
+    <% } %>
+  </div>
+</section>

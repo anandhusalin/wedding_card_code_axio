@@ -1,0 +1,46 @@
+<%
+  // _couple.ejs — side-by-side photos with parents + optional story
+  const groomFallback = 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80';
+  const brideFallback = 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80';
+  const groomPhoto = wedding.groomPhoto || groomFallback;
+  const bridePhoto = wedding.bridePhoto || brideFallback;
+  const groomParents = [wedding.groomFamily && wedding.groomFamily.fatherName, wedding.groomFamily && wedding.groomFamily.motherName].filter(Boolean).join(' & ');
+  const brideParents = [wedding.brideFamily && wedding.brideFamily.fatherName, wedding.brideFamily && wedding.brideFamily.motherName].filter(Boolean).join(' & ');
+%>
+<section class="wsec wsec-couple" data-section="couple">
+  <div class="wsec-container">
+    <h2 class="wsec-eyebrow-heading gs-reveal">The Couple</h2>
+
+    <div class="wsec-couple-grid">
+      <div class="wsec-person gs-reveal">
+        <div class="wsec-person-photo-frame">
+          <img src="<%= groomPhoto %>" alt="<%= wedding.groomName || 'Groom' %>" class="wsec-person-photo" loading="lazy">
+        </div>
+        <h3 class="wsec-person-name"><%= wedding.groomName || 'Groom' %></h3>
+        <% if (groomParents) { %>
+          <p class="wsec-person-parents">Son of <%= groomParents %></p>
+        <% } %>
+      </div>
+
+      <div class="wsec-couple-amp" aria-hidden="true">&amp;</div>
+
+      <div class="wsec-person gs-reveal">
+        <div class="wsec-person-photo-frame">
+          <img src="<%= bridePhoto %>" alt="<%= wedding.brideName || 'Bride' %>" class="wsec-person-photo" loading="lazy">
+        </div>
+        <h3 class="wsec-person-name"><%= wedding.brideName || 'Bride' %></h3>
+        <% if (brideParents) { %>
+          <p class="wsec-person-parents">Daughter of <%= brideParents %></p>
+        <% } %>
+      </div>
+    </div>
+
+    <% if (wedding.coupleStory) { %>
+      <div class="wsec-story gs-reveal">
+        <svg class="wsec-icon-quote" aria-hidden="true"><use href="#i-quote"/></svg>
+        <blockquote class="wsec-story-text"><%= wedding.coupleStory %></blockquote>
+        <p class="wsec-story-attrib">— <%= wedding.groomName || 'Groom' %> &amp; <%= wedding.brideName || 'Bride' %></p>
+      </div>
+    <% } %>
+  </div>
+</section>

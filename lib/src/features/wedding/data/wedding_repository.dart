@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -93,7 +94,21 @@ class WeddingRepository {
         ),
       );
 
-      final urls = (response.data['data']['urls'] as List)
+      // Guard against non-success envelopes so we never deref null['data']
+      final body = response.data;
+      if (body is! Map || body['success'] != true) {
+        String message = 'Upload failed';
+        if (body is Map) {
+          final error = body['error'];
+          if (error is Map) {
+            final m = error['message'];
+            if (m is String && m.isNotEmpty) message = m;
+          }
+        }
+        throw ApiException.serverError(message);
+      }
+
+      final urls = (body['data']['urls'] as List)
           .map((url) => url.toString())
           .toList();
       return urls;
@@ -144,7 +159,45 @@ class WeddingRepository {
       json = Map<String, dynamic>.from(json);
       json['id'] = json['_id'].toString();
     }
-    return Wedding.fromJson(json);
+    try {
+      return Wedding.fromJson(json);
+    } catch (e, st) {
+      // Never let a parse error kill the isolate. Build a minimal Wedding
+      // with just the fields the UI needs, log the rest for debugging.
+      debugPrint('WeddingRepository: _parseWedding failed: $e\n$st');
+      debugPrint('WeddingRepository: raw payload keys: ${json.keys.toList()}');
+      return Wedding(
+        id: json['id']?.toString() ?? json['_id']?.toString() ?? '',
+        serverId: json['_id']?.toString(),
+        userId: json['userId']?.toString() ?? '',
+        slug: json['slug']?.toString() ?? '',
+        groomName: json['groomName']?.toString() ?? '',
+        brideName: json['brideName']?.toString() ?? '',
+        groomPhoto: json['groomPhoto']?.toString(),
+        bridePhoto: json['bridePhoto']?.toString(),
+        couplePhoto: json['couplePhoto']?.toString(),
+        weddingDate: _safeDate(json['weddingDate']) ?? DateTime.now(),
+        weddingTime: json['weddingTime']?.toString(),
+        isPublished: json['isPublished'] == true,
+        isDraft: json['isDraft'] != false,
+        isRsvpEnabled: json['isRsvpEnabled'] != false,
+        viewCount: (json['viewCount'] is num) ? (json['viewCount'] as num).toInt() : 0,
+        templateId: json['templateId']?.toString() ?? 'traditional-kerala',
+        language: json['language']?.toString() ?? 'en',
+      );
+    }
+  }
+
+  DateTime? _safeDate(dynamic v) {
+    if (v is String) {
+      try {
+        return DateTime.parse(v);
+      } catch (_) {
+        return null;
+      }
+    }
+    if (v is DateTime) return v;
+    return null;
   }
 
   ApiException _mapDioError(DioException e) {

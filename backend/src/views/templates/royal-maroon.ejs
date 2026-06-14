@@ -1,516 +1,328 @@
 <!--
-  Royal Maroon template — deep maroon + gold theme with ornate borders.
-  All selectors prefixed with .royal-maroon-template to avoid style.css collisions.
+  Royal Maroon — regal heritage
+  Deep maroon + gold, Art Deco corner ornaments, double-border invitation card.
+  Fonts: Cinzel (display) + Cormorant Garamond (body italic accents)
 -->
+<%- include('../partials/sections/icons') %>
 <style>
   .royal-maroon-template {
-    --rm-accent: #7b1e1e;
-    --rm-gold: #c9a96e;
-    --rm-bg: #faf6f0;
-    --rm-card: #ffffff;
-    --rm-line: #e0d4c0;
-    --rm-text: #2c1810;
-    font-family: 'Cormorant Garamond', 'Playfair Display', serif;
-    color: var(--rm-text);
-    background: var(--rm-bg);
+    --rm-bg: #FFF8F0;
+    --rm-fg: #2A0E0E;
+    --rm-muted: #6B5050;
+    --rm-line: #C9A95E;
+    --rm-primary: #800020;
+    --rm-primary-dark: #4A0014;
+    --rm-gold: #C9A95E;
+    --rm-cream: #FAF1E0;
+    font-family: 'Cormorant Garamond', serif;
+    color: var(--rm-fg); background: var(--rm-bg);
+    line-height: 1.7; font-size: 18px;
   }
-  .royal-maroon-template .rm-hero {
-    background: linear-gradient(135deg, var(--rm-accent) 0%, #5a1515 100%);
-    color: white;
-    padding: 80px 32px;
-    text-align: center;
+  .royal-maroon-template .wsec-container { max-width: 1120px; margin: 0 auto; padding: 0 28px; }
+  .royal-maroon-template .wsec { padding: clamp(72px, 10vw, 130px) 0; position: relative; }
+  .royal-maroon-template .wsec-eyebrow-heading {
+    font-family: 'Cinzel', serif; font-weight: 500;
+    font-size: clamp(1.6rem, 3.5vw, 2.6rem); text-align: center; color: var(--rm-primary);
+    margin: 0 0 16px; letter-spacing: 0.15em; text-transform: uppercase; line-height: 1.2;
+  }
+  .royal-maroon-template .wsec-eyebrow-heading::after {
+    content: ''; display: block; width: 100px; height: 1px; background: var(--rm-gold);
+    margin: 24px auto; position: relative;
+  }
+  .royal-maroon-template .wsec-eyebrow-heading::before {
+    content: '◆'; position: absolute; left: 50%; transform: translateX(-50%);
+    color: var(--rm-gold); font-size: 14px; background: var(--rm-bg); padding: 0 16px; margin-top: 16px;
+  }
+  .royal-maroon-template .wsec-eyebrow {
+    font-family: 'Cinzel', serif; font-size: 11px; letter-spacing: 4px; text-transform: uppercase; color: var(--rm-gold);
+    margin: 0 0 18px; font-weight: 500;
+  }
+
+  /* HERO — formal invitation card with double border */
+  .royal-maroon-template .wsec-hero {
+    padding: 80px 0; min-height: 100vh; position: relative; overflow: hidden;
+    display: grid; place-items: center;
+  }
+  .royal-maroon-template .wsec-hero-bg {
+    position: absolute; inset: 0; background-size: cover; background-position: center;
+    filter: brightness(0.55) saturate(0.85);
+  }
+  .royal-maroon-template .wsec-hero-veil {
+    position: absolute; inset: 0; background: linear-gradient(180deg, rgba(74,0,20,0.3), rgba(74,0,20,0.7));
+  }
+  .royal-maroon-template .wsec-hero-inner {
+    position: relative; z-index: 2; text-align: center; color: var(--rm-cream);
+    padding: 64px 56px; max-width: 720px; background: rgba(74,0,20,0.5);
+    backdrop-filter: blur(6px); border: 1px solid var(--rm-gold);
     position: relative;
-    overflow: hidden;
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
   }
-  .royal-maroon-template .rm-hero::before,
-  .royal-maroon-template .rm-hero::after {
-    content: '';
-    position: absolute;
-    width: 100px;
-    height: 100px;
-    border: 3px solid var(--rm-gold);
+  .royal-maroon-template .wsec-hero-inner::before, .royal-maroon-template .wsec-hero-inner::after {
+    content: ''; position: absolute; width: 28px; height: 28px; border: 2px solid var(--rm-gold);
   }
-  .royal-maroon-template .rm-hero::before {
-    top: 40px;
-    left: 40px;
-    border-right: none;
-    border-bottom: none;
-  }
-  .royal-maroon-template .rm-hero::after {
-    bottom: 40px;
-    right: 40px;
-    border-left: none;
-    border-top: none;
-  }
-  .royal-maroon-template .rm-hero-content {
-    position: relative;
-    z-index: 2;
-    max-width: 800px;
-    margin: 0 auto;
-  }
-  .royal-maroon-template .rm-ornament {
-    width: 150px;
-    height: 60px;
-    margin: 0 auto 32px;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 150 60'%3E%3Cpath d='M75,30 L60,15 L45,30 L60,45 Z' fill='%23c9a96e'/%3E%3Cpath d='M75,30 L90,15 L105,30 L90,45 Z' fill='%23c9a96e'/%3E%3Ccircle cx='75' cy='30' r='4' fill='%23c9a96e'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: center;
-  }
-  .royal-maroon-template .rm-names {
-    font-size: 72px;
-    line-height: 1.1;
-    margin: 0 0 24px;
-    font-weight: 700;
-    color: white;
-    text-shadow: 2px 2px 8px rgba(0,0,0,0.3);
-    letter-spacing: -1px;
-  }
-  .royal-maroon-template .rm-amp {
-    color: var(--rm-gold);
-    font-style: italic;
-    font-size: 60px;
-    margin: 0 12px;
-    display: inline-block;
-  }
-  .royal-maroon-template .rm-date {
-    font-size: 24px;
-    margin: 24px 0 12px;
-    color: var(--rm-gold);
-    font-weight: 500;
-    letter-spacing: 2px;
-  }
-  .royal-maroon-template .rm-venue {
-    font-size: 20px;
-    color: rgba(255, 255, 255, 0.9);
-    font-style: italic;
-  }
-  .royal-maroon-template .rm-countdown {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    margin: 48px 0 0;
-  }
-  .royal-maroon-template .countdown-cell {
-    background: rgba(201, 169, 110, 0.15);
-    border: 2px solid var(--rm-gold);
-    border-radius: 8px;
-    padding: 20px 24px;
-    min-width: 80px;
-  }
-  .royal-maroon-template .countdown-num {
-    display: block;
-    font-size: 36px;
-    font-weight: 700;
-    color: var(--rm-gold);
-    line-height: 1;
-  }
-  .royal-maroon-template .countdown-label {
-    font-size: 12px;
-    color: white;
+  .royal-maroon-template .wsec-hero-inner::before { top: 12px; left: 12px; border-right: 0; border-bottom: 0; }
+  .royal-maroon-template .wsec-hero-inner::after { bottom: 12px; right: 12px; border-left: 0; border-top: 0; }
+  .royal-maroon-template .wsec-names {
+    font-family: 'Cinzel', serif; font-weight: 500; color: var(--rm-gold);
+    font-size: clamp(2.4rem, 6vw, 4.5rem); line-height: 1.05; margin: 0 0 24px; letter-spacing: 0.08em;
     text-transform: uppercase;
-    letter-spacing: 2px;
-    margin-top: 6px;
   }
-  .royal-maroon-template .section {
-    padding: 80px 32px;
-    position: relative;
+  .royal-maroon-template .wsec-names .wsec-name { display: block; }
+  .royal-maroon-template .wsec-names .wsec-amp { font-size: 0.6em; color: var(--rm-cream); font-style: normal; display: block; margin: 0.2em 0; }
+  .royal-maroon-template .wsec-date { font-family: 'Cinzel', serif; font-size: 0.95rem; margin: 0 0 8px; letter-spacing: 3px; text-transform: uppercase; color: var(--rm-cream); }
+  .royal-maroon-template .wsec-venue { font-size: 0.95rem; margin: 0 0 32px; display: flex; align-items: center; justify-content: center; gap: 8px; color: var(--rm-cream); }
+  .royal-maroon-template .wsec-venue .wsec-icon-inline { width: 16px; height: 16px; }
+  .royal-maroon-template .wsec-countdown { display: flex; gap: 12px; justify-content: center; margin: 24px 0 0; flex-wrap: wrap; }
+  .royal-maroon-template .wsec-cd-cell {
+    background: rgba(0,0,0,0.25); border: 1px solid var(--rm-gold);
+    padding: 14px 16px; min-width: 78px;
   }
-  .royal-maroon-template .section-title {
-    font-size: 42px;
-    text-align: center;
-    margin-bottom: 56px;
-    color: var(--rm-accent);
-    position: relative;
-    font-weight: 700;
+  .royal-maroon-template .wsec-cd-num { display: block; font-family: 'Cinzel', serif; font-size: 2rem; font-weight: 500; line-height: 1; color: var(--rm-gold); }
+  .royal-maroon-template .wsec-cd-lbl { display: block; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--rm-cream); margin-top: 6px; }
+  .royal-maroon-template .wsec-cd-celebrated { font-family: 'Cinzel', serif; color: var(--rm-gold); }
+  .royal-maroon-template .wsec-scroll-cue {
+    margin-top: 32px; display: inline-flex; align-items: center; gap: 10px;
+    color: var(--rm-gold); font-size: 10px; letter-spacing: 3px; text-transform: uppercase; text-decoration: none;
   }
-  .royal-maroon-template .section-title::after {
-    content: '✦';
-    position: absolute;
-    bottom: -32px;
-    left: 50%;
-    transform: translateX(-50%);
-    color: var(--rm-gold);
-    font-size: 24px;
+  .royal-maroon-template .wsec-scroll-cue .wsec-icon-inline { width: 14px; height: 14px; }
+
+  /* COUPLE */
+  .royal-maroon-template .wsec-couple { background: var(--rm-bg); }
+  .royal-maroon-template .wsec-couple-grid {
+    display: grid; grid-template-columns: 1fr auto 1fr; gap: 48px; align-items: center;
+    max-width: 920px; margin: 0 auto;
   }
-  .royal-maroon-template .rm-invite {
-    background: white;
-    border: 2px solid var(--rm-gold);
-    border-radius: 8px;
-    padding: 48px;
-    margin: 0 auto;
-    max-width: 800px;
-    text-align: center;
-    box-shadow: 0 12px 40px rgba(123, 30, 30, 0.15);
-    position: relative;
+  .royal-maroon-template .wsec-person { text-align: center; }
+  .royal-maroon-template .wsec-person-photo-frame {
+    width: clamp(170px, 22vw, 230px); height: clamp(170px, 22vw, 230px);
+    margin: 0 auto 24px; position: relative; background: var(--rm-cream);
+    border: 2px solid var(--rm-gold); padding: 6px;
   }
-  .royal-maroon-template .rm-invite::before,
-  .royal-maroon-template .rm-invite::after {
-    content: '';
-    position: absolute;
-    width: 30px;
-    height: 30px;
-    border: 2px solid var(--rm-gold);
+  .royal-maroon-template .wsec-person-photo { width: 100%; height: 100%; object-fit: cover; }
+  .royal-maroon-template .wsec-person-name {
+    font-family: 'Cinzel', serif; font-weight: 500; font-size: 1.6rem; margin: 0 0 8px;
+    color: var(--rm-primary); letter-spacing: 0.1em; text-transform: uppercase;
   }
-  .royal-maroon-template .rm-invite::before {
-    top: 8px;
-    left: 8px;
-    border-right: none;
-    border-bottom: none;
+  .royal-maroon-template .wsec-person-parents { color: var(--rm-muted); font-size: 0.95rem; margin: 0; font-style: italic; }
+  .royal-maroon-template .wsec-couple-amp {
+    font-family: 'Cinzel', serif; font-size: 3rem; color: var(--rm-gold);
   }
-  .royal-maroon-template .rm-invite::after {
-    bottom: 8px;
-    right: 8px;
-    border-left: none;
-    border-top: none;
+  .royal-maroon-template .wsec-story {
+    max-width: 760px; margin: 64px auto 0; text-align: center; padding: 48px 40px;
+    background: var(--rm-cream); border: 1px solid var(--rm-gold); position: relative;
   }
-  .royal-maroon-template .rm-invite p {
-    font-size: 22px;
-    line-height: 1.8;
-    color: var(--rm-text);
-    font-style: italic;
+  .royal-maroon-template .wsec-story::before, .royal-maroon-template .wsec-story::after {
+    content: '◆'; position: absolute; color: var(--rm-gold); font-size: 14px;
   }
-  .royal-maroon-template .couple-container {
-    background: white;
-    border: 1px solid var(--rm-line);
-    border-radius: 12px;
-    padding: 56px;
-    box-shadow: 0 16px 48px rgba(123, 30, 30, 0.12);
+  .royal-maroon-template .wsec-story::before { top: 12px; left: 50%; transform: translateX(-50%); background: var(--rm-cream); padding: 0 12px; }
+  .royal-maroon-template .wsec-story::after { bottom: 12px; left: 50%; transform: translateX(-50%); background: var(--rm-cream); padding: 0 12px; }
+  .royal-maroon-template .wsec-icon-quote { width: 28px; height: 28px; color: var(--rm-gold); }
+  .royal-maroon-template .wsec-story-text {
+    margin: 12px 0; font-style: italic; font-size: 1.3rem;
+    line-height: 1.6; color: var(--rm-fg); border: 0; padding: 0; background: transparent;
   }
-  .royal-maroon-template .rm-couple-grid {
-    display: grid;
-    grid-template-columns: 1fr auto 1fr;
-    gap: 48px;
-    align-items: center;
+  .royal-maroon-template .wsec-story-attrib { color: var(--rm-muted); font-size: 0.9rem; letter-spacing: 1px; }
+
+  /* FAMILY */
+  .royal-maroon-template .wsec-family { background: var(--rm-cream); }
+  .royal-maroon-template .wsec-family-grid {
+    display: grid; grid-template-columns: 1fr auto 1fr; gap: 48px; max-width: 920px; margin: 0 auto; align-items: start;
   }
-  .royal-maroon-template .rm-person {
-    text-align: center;
+  .royal-maroon-template .wsec-family-col { text-align: center; }
+  .royal-maroon-template .wsec-family-name {
+    font-family: 'Cinzel', serif; font-size: 1.2rem; margin: 0 0 24px; color: var(--rm-primary);
+    letter-spacing: 0.1em; text-transform: uppercase;
   }
-  .royal-maroon-template .rm-photo-frame {
-    width: 220px;
-    height: 220px;
-    border-radius: 50%;
-    background: white;
-    padding: 8px;
-    border: 3px solid var(--rm-gold);
-    box-shadow: 0 12px 32px rgba(123, 30, 30, 0.2);
-    margin: 0 auto 24px;
-    position: relative;
-    overflow: hidden;
+  .royal-maroon-template .wsec-family-photo-frame {
+    width: 190px; height: 190px; margin: 0 auto 20px; overflow: hidden;
+    background: var(--rm-bg); border: 2px solid var(--rm-gold); padding: 4px;
   }
-  .royal-maroon-template .rm-photo {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 50%;
+  .royal-maroon-template .wsec-family-photo-frame img { width: 100%; height: 100%; object-fit: cover; }
+  .royal-maroon-template .wsec-family-avatar {
+    width: 190px; height: 190px; margin: 0 auto 20px;
+    background: var(--rm-primary); color: var(--rm-gold); display: grid; place-items: center;
+    font-family: 'Cinzel', serif; font-size: 4rem; font-weight: 500; border: 2px solid var(--rm-gold);
   }
-  .royal-maroon-template .rm-name {
-    font-size: 32px;
-    margin-bottom: 12px;
-    color: var(--rm-accent);
-    font-weight: 700;
+  .royal-maroon-template .wsec-family-list { list-style: none; padding: 0; margin: 0; }
+  .royal-maroon-template .wsec-family-list li { padding: 8px 0; }
+  .royal-maroon-template .wsec-family-role {
+    display: block; font-family: 'Cinzel', serif; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--rm-gold);
   }
-  .royal-maroon-template .rm-parents {
-    color: var(--rm-text);
-    font-size: 16px;
-    line-height: 1.6;
-    font-style: italic;
+  .royal-maroon-template .wsec-family-name-val { font-size: 1rem; color: var(--rm-fg); }
+  .royal-maroon-template .wsec-family-divider {
+    width: 1px; align-self: stretch; background: var(--rm-gold); position: relative;
   }
-  .royal-maroon-template .rm-story {
-    margin-top: 56px;
-    text-align: center;
-    max-width: 700px;
-    margin-left: auto;
-    margin-right: auto;
-    padding: 32px;
-    background: rgba(201, 169, 110, 0.08);
-    border-left: 4px solid var(--rm-gold);
-    border-right: 4px solid var(--rm-gold);
+  .royal-maroon-template .wsec-family-divider::before {
+    content: '◆'; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    color: var(--rm-gold); background: var(--rm-cream); padding: 4px; font-size: 14px;
   }
-  .royal-maroon-template .rm-story p {
-    font-size: 20px;
-    line-height: 1.8;
-    color: var(--rm-text);
-    font-style: italic;
+
+  /* EVENTS */
+  .royal-maroon-template .wsec-events { background: var(--rm-bg); }
+  .royal-maroon-template .wsec-timeline {
+    list-style: none; padding: 0; margin: 0; max-width: 720px; margin-left: auto; margin-right: auto;
   }
-  .royal-maroon-template .events-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 28px;
-    margin-top: 48px;
+  .royal-maroon-template .wsec-timeline-item {
+    display: grid; grid-template-columns: 60px 1fr; gap: 24px; align-items: start;
+    padding: 24px 0; border-top: 1px solid var(--rm-line);
   }
-  .royal-maroon-template .event-card {
-    background: white;
-    border: 1px solid var(--rm-line);
-    border-radius: 8px;
-    padding: 32px;
-    box-shadow: 0 8px 32px rgba(123, 30, 30, 0.1);
-    border-top: 4px solid var(--rm-gold);
+  .royal-maroon-template .wsec-timeline-marker { font-family: 'Cinzel', serif; }
+  .royal-maroon-template .wsec-timeline-num { color: var(--rm-gold); font-size: 1.2rem; }
+  .royal-maroon-template .wsec-timeline-title {
+    font-family: 'Cinzel', serif; font-weight: 500; font-size: 1.3rem; margin: 0 0 6px;
+    color: var(--rm-primary); letter-spacing: 0.08em; text-transform: uppercase;
   }
-  .royal-maroon-template .event-card h3 {
-    font-size: 26px;
-    margin-bottom: 20px;
-    color: var(--rm-accent);
-    font-weight: 700;
+  .royal-maroon-template .wsec-timeline-date {
+    display: flex; align-items: center; gap: 8px; color: var(--rm-muted); font-size: 0.9rem; margin: 0 0 10px;
   }
-  .royal-maroon-template .event-detail {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 12px;
-    color: var(--rm-text);
-    font-size: 16px;
+  .royal-maroon-template .wsec-timeline-date .wsec-icon-inline { width: 16px; height: 16px; }
+  .royal-maroon-template .wsec-timeline-desc { color: var(--rm-fg); margin: 0; }
+  .royal-maroon-template .wsec-event-card {
+    max-width: 560px; margin: 0 auto; padding: 48px 40px; background: var(--rm-cream);
+    border: 2px solid var(--rm-gold); text-align: center; position: relative;
   }
-  .royal-maroon-template .event-detail-icon {
-    color: var(--rm-gold);
-    font-weight: 700;
-    width: 24px;
+  .royal-maroon-template .wsec-event-card::before, .royal-maroon-template .wsec-event-card::after {
+    content: ''; position: absolute; width: 32px; height: 32px; border: 2px solid var(--rm-primary);
   }
-  .royal-maroon-template .gallery-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 20px;
+  .royal-maroon-template .wsec-event-card::before { top: 8px; left: 8px; border-right: 0; border-bottom: 0; }
+  .royal-maroon-template .wsec-event-card::after { bottom: 8px; right: 8px; border-left: 0; border-top: 0; }
+  .royal-maroon-template .wsec-event-name {
+    font-family: 'Cinzel', serif; font-weight: 500; font-size: 1.8rem; margin: 0 0 20px;
+    color: var(--rm-primary); letter-spacing: 0.1em; text-transform: uppercase;
   }
-  .royal-maroon-template .gallery-item {
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 8px 32px rgba(123, 30, 30, 0.15);
-    cursor: pointer;
-    aspect-ratio: 1;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    border: 3px solid var(--rm-gold);
+  .royal-maroon-template .wsec-event-info {
+    list-style: none; padding: 0; margin: 0 0 28px; display: grid; gap: 10px;
   }
-  .royal-maroon-template .gallery-item:hover {
-    transform: scale(1.03);
-    box-shadow: 0 16px 48px rgba(123, 30, 30, 0.25);
+  .royal-maroon-template .wsec-event-info li {
+    display: flex; align-items: center; justify-content: center; gap: 10px; color: var(--rm-fg);
   }
-  .royal-maroon-template .gallery-item img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+  .royal-maroon-template .wsec-icon { width: 18px; height: 18px; color: var(--rm-gold); }
+
+  /* GALLERY */
+  .royal-maroon-template .wsec-gallery { background: var(--rm-cream); }
+  .royal-maroon-template .wsec-gallery-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
   }
-  .royal-maroon-template .rsvp-cta {
-    background: var(--rm-accent);
-    color: white;
-    border-radius: 12px;
-    padding: 64px 40px;
-    text-align: center;
-    margin: 0 auto;
-    max-width: 700px;
-    box-shadow: 0 16px 48px rgba(123, 30, 30, 0.3);
-    border: 3px solid var(--rm-gold);
+  .royal-maroon-template .wsec-gallery-item {
+    padding: 0; border: 0; background: transparent; cursor: pointer; position: relative;
+    overflow: hidden; aspect-ratio: 1; border: 1px solid var(--rm-gold); padding: 4px; background: var(--rm-bg);
   }
-  .royal-maroon-template .rsvp-cta h2 {
-    font-size: 38px;
-    color: white;
-    margin-bottom: 20px;
-    font-weight: 700;
+  .royal-maroon-template .wsec-gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s; }
+  .royal-maroon-template .wsec-gallery-item:hover img { transform: scale(1.05); }
+  .royal-maroon-template .wsec-gallery-caption {
+    position: absolute; bottom: 0; left: 0; right: 0; padding: 12px;
+    background: linear-gradient(transparent, rgba(74,0,20,0.85)); color: var(--rm-cream); font-size: 0.85rem;
   }
-  .royal-maroon-template .rsvp-cta p {
-    font-size: 20px;
-    color: rgba(255, 255, 255, 0.9);
-    margin-bottom: 32px;
-    font-style: italic;
+
+  /* TRAVEL */
+  .royal-maroon-template .wsec-travel { background: var(--rm-bg); }
+  .royal-maroon-template .wsec-travel-layout {
+    display: grid; grid-template-columns: 1fr 1.4fr; gap: 48px; max-width: 1080px; margin: 0 auto;
   }
-  .royal-maroon-template .rsvp-cta .btn {
-    background: var(--rm-gold);
-    color: var(--rm-accent);
-    padding: 18px 48px;
-    border-radius: 4px;
-    border: none;
-    font-size: 18px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-transform: uppercase;
-    letter-spacing: 2px;
+  .royal-maroon-template .wsec-travel-subtitle {
+    font-family: 'Cinzel', serif; font-size: 1.2rem; margin: 0 0 20px; color: var(--rm-primary);
+    letter-spacing: 0.1em; text-transform: uppercase; display: flex; align-items: center; gap: 10px;
   }
-  .royal-maroon-template .rsvp-cta .btn:hover {
-    background: white;
-    color: var(--rm-accent);
-    transform: translateY(-2px);
+  .royal-maroon-template .wsec-travel-address { font-style: normal; color: var(--rm-fg); line-height: 1.8; display: grid; gap: 6px; }
+  .royal-maroon-template .wsec-travel-address strong { font-family: 'Cinzel', serif; font-size: 1.1rem; }
+  .royal-maroon-template .wsec-travel-notes { color: var(--rm-muted); font-size: 0.95rem; font-style: italic; }
+  .royal-maroon-template .wsec-travel-map iframe { width: 100%; aspect-ratio: 4/3; border: 2px solid var(--rm-gold); }
+  .royal-maroon-template .wsec-hotels { margin-top: 64px; }
+  .royal-maroon-template .wsec-hotels-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; }
+  .royal-maroon-template .wsec-hotel-card {
+    display: grid; grid-template-columns: 1fr auto; gap: 16px; align-items: center;
+    padding: 20px; background: var(--rm-cream); border: 1px solid var(--rm-gold);
   }
-  .royal-maroon-template .rm-footer {
-    background: var(--rm-accent);
-    color: white;
-    text-align: center;
-    padding: 56px 32px;
-    margin-top: 80px;
-    border-top: 4px solid var(--rm-gold);
+  .royal-maroon-template .wsec-hotel-name { font-family: 'Cinzel', serif; font-size: 1.1rem; margin: 0 0 4px; color: var(--rm-primary); }
+  .royal-maroon-template .wsec-hotel-address, .royal-maroon-template .wsec-hotel-distance { color: var(--rm-muted); font-size: 0.9rem; margin: 2px 0; display: flex; align-items: center; gap: 6px; }
+  .royal-maroon-template .wsec-icon-sm { width: 12px; height: 12px; }
+
+  /* GIFT */
+  .royal-maroon-template .wsec-gift { background: var(--rm-cream); }
+  .royal-maroon-template .wsec-gift-intro { text-align: center; max-width: 540px; margin: 0 auto 48px; color: var(--rm-muted); font-style: italic; }
+  .royal-maroon-template .wsec-gift-list { list-style: none; padding: 0; margin: 0; max-width: 720px; margin-left: auto; margin-right: auto; display: grid; gap: 12px; }
+  .royal-maroon-template .wsec-gift-item {
+    display: grid; grid-template-columns: 56px 1fr; gap: 20px; align-items: start;
+    padding: 24px; background: var(--rm-bg); border: 1px solid var(--rm-gold);
   }
-  .royal-maroon-template .rm-footer h2 {
-    font-size: 32px;
-    margin-bottom: 16px;
-    color: var(--rm-gold);
+  .royal-maroon-template .wsec-gift-icon { display: grid; place-items: center; }
+  .royal-maroon-template .wsec-gift-icon .wsec-icon { width: 24px; height: 24px; color: var(--rm-gold); }
+  .royal-maroon-template .wsec-gift-label { font-family: 'Cinzel', serif; font-size: 1.1rem; margin: 0 0 6px; color: var(--rm-primary); letter-spacing: 0.08em; text-transform: uppercase; }
+  .royal-maroon-template .wsec-gift-value {
+    display: inline-flex; align-items: center; gap: 8px; color: var(--rm-fg); text-decoration: none;
+    font-size: 1rem; background: transparent; border: 0; padding: 0; cursor: pointer; word-break: break-all;
   }
-  .royal-maroon-template .rm-footer p {
-    font-size: 18px;
-    opacity: 0.9;
-    font-style: italic;
+  .royal-maroon-template .wsec-gift-value:hover { color: var(--rm-primary); }
+  .royal-maroon-template .wsec-gift-value .wsec-icon { width: 16px; height: 16px; color: var(--rm-muted); }
+  .royal-maroon-template .wsec-gift-note { color: var(--rm-muted); font-size: 0.9rem; margin: 8px 0 0; font-style: italic; }
+
+  /* RSVP */
+  .royal-maroon-template .wsec-rsvp { background: var(--rm-primary-dark); color: var(--rm-cream); text-align: center; }
+  .royal-maroon-template .wsec-rsvp-title {
+    font-family: 'Cinzel', serif; font-weight: 500; font-size: clamp(1.6rem, 3.5vw, 2.6rem);
+    margin: 0 0 12px; color: var(--rm-gold); letter-spacing: 0.15em; text-transform: uppercase;
   }
-  @media (max-width: 768px) {
-    .royal-maroon-template .rm-names { font-size: 48px; }
-    .royal-maroon-template .rm-countdown { gap: 12px; }
-    .royal-maroon-template .countdown-cell { padding: 12px 16px; min-width: 60px; }
-    .royal-maroon-template .rm-couple-grid { grid-template-columns: 1fr; gap: 40px; }
-    .royal-maroon-template .rm-photo-frame { width: 180px; height: 180px; }
-    .royal-maroon-template .events-grid { grid-template-columns: 1fr; }
+  .royal-maroon-template .wsec-rsvp-sub { color: rgba(250,241,224,0.8); margin: 0 0 32px; }
+
+  /* BUTTONS */
+  .royal-maroon-template .wsec-btn {
+    display: inline-flex; align-items: center; gap: 8px; padding: 14px 28px;
+    font-family: 'Cinzel', serif; font-size: 11px; letter-spacing: 3px; text-transform: uppercase;
+    border-radius: 0; border: 1px solid; cursor: pointer; transition: all 0.3s; text-decoration: none; font-weight: 500;
+  }
+  .royal-maroon-template .wsec-btn .wsec-icon { width: 16px; height: 16px; }
+  .royal-maroon-template .wsec-btn-primary { background: var(--rm-gold); color: var(--rm-primary-dark); border-color: var(--rm-gold); }
+  .royal-maroon-template .wsec-btn-primary:hover { background: var(--rm-cream); color: var(--rm-primary); border-color: var(--rm-cream); }
+  .royal-maroon-template .wsec-btn-outline { background: transparent; color: var(--rm-gold); border-color: var(--rm-gold); }
+  .royal-maroon-template .wsec-btn-outline:hover { background: var(--rm-gold); color: var(--rm-primary-dark); }
+  .royal-maroon-template .wsec-btn-ghost { background: transparent; color: var(--rm-fg); border-color: var(--rm-line); }
+  .royal-maroon-template .wsec-btn-ghost:hover { border-color: var(--rm-primary); color: var(--rm-primary); }
+
+  /* FOOTER */
+  .royal-maroon-template .wsec-footer { background: var(--rm-primary-dark); color: var(--rm-cream); padding: 80px 0; text-align: center; }
+  .royal-maroon-template .wsec-footer-eyebrow { font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 4px; text-transform: uppercase; color: var(--rm-gold); margin: 0 0 24px; }
+  .royal-maroon-template .wsec-footer-names {
+    font-family: 'Cinzel', serif; font-weight: 500; font-size: clamp(1.8rem, 4.5vw, 3rem);
+    margin: 0 0 16px; line-height: 1.1; color: var(--rm-gold); letter-spacing: 0.1em; text-transform: uppercase;
+  }
+  .royal-maroon-template .wsec-footer-amp { color: var(--rm-cream); display: block; margin: 0.2em 0; font-size: 0.5em; }
+  .royal-maroon-template .wsec-footer-date { color: var(--rm-cream); font-size: 0.9rem; margin: 0 0 32px; }
+  .royal-maroon-template .wsec-footer-made { color: rgba(250,241,224,0.5); font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase; }
+
+  /* FLOATING UI */
+  .royal-maroon-template .wsec-share-rail a { background: var(--rm-cream); color: var(--rm-primary); border: 1px solid var(--rm-gold); }
+  .royal-maroon-template .wsec-share-rail a:hover { background: var(--rm-gold); color: var(--rm-primary-dark); }
+  .royal-maroon-template .wsec-music-toggle { background: var(--rm-primary); color: var(--rm-gold); border: 1px solid var(--rm-gold); border-radius: 0; }
+  .royal-maroon-template .wsec-music-toggle .wsec-icon { width: 22px; height: 22px; }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    .royal-maroon-template .wsec-hero-inner { padding: 48px 28px; }
+    .royal-maroon-template .wsec-couple-grid { grid-template-columns: 1fr; gap: 32px; }
+    .royal-maroon-template .wsec-couple-amp { font-size: 2.5rem; }
+    .royal-maroon-template .wsec-family-grid { grid-template-columns: 1fr; gap: 48px; }
+    .royal-maroon-template .wsec-family-divider { display: none; }
+    .royal-maroon-template .wsec-gallery-grid { grid-template-columns: repeat(2, 1fr); }
+    .royal-maroon-template .wsec-travel-layout { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 480px) {
+    .royal-maroon-template .wsec-gallery-grid { grid-template-columns: 1fr; }
+    .royal-maroon-template .wsec-event-card { padding: 40px 24px; }
   }
 </style>
 
 <div class="royal-maroon-template">
-  <header class="rm-hero">
-    <div class="rm-hero-content">
-      <div class="rm-ornament"></div>
-      <h1 class="rm-names">
-        <%= wedding.groomName %>
-        <span class="rm-amp">&amp;</span>
-        <%= wedding.brideName %>
-      </h1>
-      <p class="rm-date">
-        <% const d = new Date(wedding.weddingDate); %>
-        <%= d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' }) %>
-      </p>
-      <p class="rm-venue"><%= wedding.venue?.name || 'Venue TBA' %></p>
+  <%- include('../partials/sections/_hero', { wedding, scope: 'rm' }) %>
 
-      <div id="countdown" class="rm-countdown" aria-label="Countdown to wedding">
-        <div class="countdown-cell">
-          <span class="countdown-num" data-cd="days">00</span>
-          <span class="countdown-label">Days</span>
-        </div>
-        <div class="countdown-cell">
-          <span class="countdown-num" data-cd="hours">00</span>
-          <span class="countdown-label">Hours</span>
-        </div>
-        <div class="countdown-cell">
-          <span class="countdown-num" data-cd="minutes">00</span>
-          <span class="countdown-label">Minutes</span>
-        </div>
-        <div class="countdown-cell">
-          <span class="countdown-num" data-cd="seconds">00</span>
-          <span class="countdown-label">Seconds</span>
-        </div>
-      </div>
-      <p id="countdownCelebrated" class="countdown-celebrated" style="display:none; color: var(--rm-gold); margin-top: 24px;">Today we celebrate! 🎉</p>
-    </div>
-  </header>
+  <main>
+    <%- include('../partials/sections/_couple', { wedding }) %>
+    <%- include('../partials/sections/_family', { wedding }) %>
+    <%- include('../partials/sections/_events', { wedding }) %>
+    <%- include('../partials/sections/_gallery', { wedding }) %>
+    <%- include('../partials/sections/_travel', { wedding }) %>
+    <%- include('../partials/sections/_gift', { wedding }) %>
+    <%- include('../partials/sections/_rsvp-cta', { wedding }) %>
+  </main>
 
-  <% if (wedding.invitationMessage) { %>
-    <section class="section">
-      <div class="rm-invite">
-        <h2 class="section-title">The Invitation</h2>
-        <p><%= wedding.invitationMessage %></p>
-      </div>
-    </section>
-  <% } %>
-
-  <section class="section">
-    <div class="couple-container">
-      <h2 class="section-title">The Couple</h2>
-      <div class="rm-couple-grid">
-        <div class="rm-person gs-reveal">
-          <div class="rm-photo-frame">
-            <img src="<%= wedding.groomPhoto || 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80' %>" alt="<%= wedding.groomName %>" class="rm-photo">
-          </div>
-          <h3 class="rm-name"><%= wedding.groomName %></h3>
-          <p class="rm-parents">
-            Son of <%= wedding.groomFamily?.fatherName || 'Mr.' %> &amp; <%= wedding.groomFamily?.motherName || 'Mrs.' %>
-          </p>
-        </div>
-        <div class="gs-reveal" style="color: var(--rm-gold); font-size: 56px;">✦</div>
-        <div class="rm-person gs-reveal">
-          <div class="rm-photo-frame">
-            <img src="<%= wedding.bridePhoto || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80' %>" alt="<%= wedding.brideName %>" class="rm-photo">
-          </div>
-          <h3 class="rm-name"><%= wedding.brideName %></h3>
-          <p class="rm-parents">
-            Daughter of <%= wedding.brideFamily?.fatherName || 'Mr.' %> &amp; <%= wedding.brideFamily?.motherName || 'Mrs.' %>
-          </p>
-        </div>
-      </div>
-      <% if (wedding.coupleStory) { %>
-        <div class="rm-story">
-          <p><%= wedding.coupleStory %></p>
-        </div>
-      <% } %>
-    </div>
-  </section>
-
-  <% if (wedding.timeline && wedding.timeline.length > 0) { %>
-    <section class="section" style="background: linear-gradient(180deg, var(--rm-bg) 0%, rgba(201, 169, 110, 0.05) 100%);">
-      <h2 class="section-title">Wedding Events</h2>
-      <div class="events-grid">
-        <% wedding.timeline.forEach(function (ev) { %>
-          <div class="event-card gs-reveal">
-            <h3><%= ev.title %></h3>
-            <% if (ev.date) { %>
-              <div class="event-detail">
-                <span class="event-detail-icon">▸</span>
-                <span><%= new Date(ev.date).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' }) %></span>
-              </div>
-            <% } %>
-            <% if (ev.description) { %><p style="margin-top: 12px; font-style: italic;"><%= ev.description %></p><% } %>
-          </div>
-        <% }) %>
-      </div>
-    </section>
-  <% } else { %>
-    <section class="section" style="background: linear-gradient(180deg, var(--rm-bg) 0%, rgba(201, 169, 110, 0.05) 100%);">
-      <h2 class="section-title">The Wedding</h2>
-      <div class="event-card gs-reveal" style="margin: 0 auto; max-width: 600px;">
-        <h3 style="text-align: center; color: var(--rm-accent);">Muhurtham</h3>
-        <div class="event-detail" style="justify-content: center;">
-          <span class="event-detail-icon">▸</span>
-          <span><%= new Date(wedding.weddingDate).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' }) %></span>
-        </div>
-        <div class="event-detail" style="justify-content: center;">
-          <span class="event-detail-icon">▸</span>
-          <span><%= wedding.weddingTime || '10:00 AM' %></span>
-        </div>
-        <% if (wedding.venue?.name || wedding.venue?.address) { %>
-          <div class="event-detail" style="justify-content: center;">
-            <span class="event-detail-icon">▸</span>
-            <span><%= wedding.venue?.name %><%= wedding.venue?.name && wedding.venue?.address ? ', ' : '' %><%= wedding.venue?.address %></span>
-          </div>
-        <% } %>
-        <% if (wedding.venue?.mapUrl) { %>
-          <div style="text-align: center; margin-top: 24px;">
-            <a href="<%= wedding.venue.mapUrl %>" target="_blank" rel="noopener" class="btn" style="background: var(--rm-gold); color: var(--rm-accent);">View on Map</a>
-          </div>
-        <% } %>
-      </div>
-    </section>
-  <% } %>
-
-  <% if (wedding.galleryPhotos && wedding.galleryPhotos.length > 0) { %>
-    <section class="section">
-      <h2 class="section-title">Gallery</h2>
-      <div class="gallery-grid">
-        <% wedding.galleryPhotos.forEach(function (photo) { %>
-          <div class="gallery-item gs-reveal" tabindex="0" role="button" onclick="openLightbox(this)">
-            <img src="<%= photo.url %>" alt="<%= photo.caption || 'Wedding photo' %>" loading="lazy">
-          </div>
-        <% }) %>
-      </div>
-    </section>
-  <% } %>
-
-  <% if (wedding.isRsvpEnabled) { %>
-    <section class="rsvp-cta gs-reveal">
-      <h2>Will you join our celebration?</h2>
-      <p>Please let us know if you can make it to our special day.</p>
-      <button class="btn" type="button" onclick="openRsvpModal()">RSVP Now</button>
-    </section>
-  <% } %>
-  </div>
-
-<aside id="shareRail" class="share-rail" aria-label="Share this wedding"></aside>
-<button id="musicToggle" class="music-toggle" type="button" aria-label="Toggle background music">♪</button>
-
-<footer class="rm-footer">
-  <h2><%= wedding.groomName %> &amp; <%= wedding.brideName %></h2>
-  <p>Thank you for being part of our journey.</p>
-</footer>
+  <%- include('../partials/sections/_footer', { wedding }) %>
+  <%- include('../partials/sections/_share-music', { wedding }) %>
+</div>

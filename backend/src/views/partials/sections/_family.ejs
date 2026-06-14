@@ -1,0 +1,60 @@
+<%
+  // _family.ejs — two-column family tree (bride | groom)
+  // Uses wedding.family.{bride,groom} with photo/parents. Falls back to
+  // wedding.brideFamily / wedding.groomFamily if the new structure isn't present.
+  const brideNode = (wedding.family && wedding.family.bride) || wedding.brideFamily || {};
+  const groomNode = (wedding.family && wedding.family.groom) || wedding.groomFamily || {};
+  const hasBride = !!(brideNode.fatherName || brideNode.motherName || brideNode.photo);
+  const hasGroom = !!(groomNode.fatherName || groomNode.motherName || groomNode.photo);
+  if (!hasBride && !hasGroom) return ''; // skip section entirely
+  const initialOf = (s) => (s && s.trim() ? s.trim().charAt(0).toUpperCase() : '');
+%>
+<section class="wsec wsec-family" data-section="family">
+  <div class="wsec-container">
+    <h2 class="wsec-eyebrow-heading gs-reveal">Our Families</h2>
+
+    <div class="wsec-family-grid">
+      <% if (hasBride) { %>
+        <div class="wsec-family-col gs-reveal">
+          <h3 class="wsec-family-name"><%= wedding.brideName || 'Bride' %>'s Family</h3>
+          <% if (brideNode.photo) { %>
+            <div class="wsec-family-photo-frame">
+              <img src="<%= brideNode.photo %>" alt="<%= wedding.brideName || 'Bride' %>'s family" loading="lazy">
+            </div>
+          <% } else { %>
+            <div class="wsec-family-avatar" aria-hidden="true">
+              <span><%= initialOf(wedding.brideName) %></span>
+            </div>
+          <% } %>
+          <ul class="wsec-family-list">
+            <% if (brideNode.fatherName) { %><li><span class="wsec-family-role">Father</span> <span class="wsec-family-name-val"><%= brideNode.fatherName %></span></li><% } %>
+            <% if (brideNode.motherName) { %><li><span class="wsec-family-role">Mother</span> <span class="wsec-family-name-val"><%= brideNode.motherName %></span></li><% } %>
+          </ul>
+        </div>
+      <% } %>
+
+      <% if (hasBride && hasGroom) { %>
+        <div class="wsec-family-divider" aria-hidden="true"></div>
+      <% } %>
+
+      <% if (hasGroom) { %>
+        <div class="wsec-family-col gs-reveal">
+          <h3 class="wsec-family-name"><%= wedding.groomName || 'Groom' %>'s Family</h3>
+          <% if (groomNode.photo) { %>
+            <div class="wsec-family-photo-frame">
+              <img src="<%= groomNode.photo %>" alt="<%= wedding.groomName || 'Groom' %>'s family" loading="lazy">
+            </div>
+          <% } else { %>
+            <div class="wsec-family-avatar" aria-hidden="true">
+              <span><%= initialOf(wedding.groomName) %></span>
+            </div>
+          <% } %>
+          <ul class="wsec-family-list">
+            <% if (groomNode.fatherName) { %><li><span class="wsec-family-role">Father</span> <span class="wsec-family-name-val"><%= groomNode.fatherName %></span></li><% } %>
+            <% if (groomNode.motherName) { %><li><span class="wsec-family-role">Mother</span> <span class="wsec-family-name-val"><%= groomNode.motherName %></span></li><% } %>
+          </ul>
+        </div>
+      <% } %>
+    </div>
+  </div>
+</section>

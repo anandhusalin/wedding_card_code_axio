@@ -45,6 +45,43 @@ const themeSchema = z.object({
   coverImage: z.string().optional(),
 });
 
+const familyMemberSchema = z.object({
+  fatherName: z.string().max(100).optional(),
+  motherName: z.string().max(100).optional(),
+  photo: z.string().optional(),
+});
+
+const familyTreeSchema = z.object({
+  bride: familyMemberSchema.optional(),
+  groom: familyMemberSchema.optional(),
+});
+
+const hotelSchema = z.object({
+  name: z.string().max(200).optional(),
+  address: z.string().max(500).optional(),
+  phone: z.string().max(50).optional(),
+  distance: z.string().max(100).optional(),
+});
+
+const travelSchema = z.object({
+  venueMapEmbed: z
+    .string()
+    .optional()
+    .refine(
+      (v) => v == null || v === '' || /^https?:\/\//i.test(v),
+      { message: 'Must be a URL (http:// or https://) or empty' },
+    ),
+  notes: z.string().max(2000).optional(),
+  hotels: z.array(hotelSchema).max(20).optional(),
+});
+
+const giftEntrySchema = z.object({
+  label: z.string().max(100).optional(),
+  url: z.string().max(500).optional(),
+  icon: z.string().max(50).optional(),
+  note: z.string().max(200).optional(),
+});
+
 // Hardcoded list of valid template IDs. All are admin-defined. Frontend could
 // eventually include user-uploaded templates, but for now this enforces only
 // the 4 approved free templates.
@@ -98,6 +135,9 @@ const createWeddingSchema = z.object({
   metaTitle: z.string().max(200).optional(),
   metaDescription: z.string().max(500).optional(),
   ogImage: z.string().optional(),
+  family: familyTreeSchema.optional(),
+  travel: travelSchema.optional(),
+  giftRegistry: z.array(giftEntrySchema).max(50).optional(),
 });
 
 const updateWeddingSchema = createWeddingSchema.partial();

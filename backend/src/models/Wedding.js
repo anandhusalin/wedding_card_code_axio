@@ -88,6 +88,44 @@ const weddingSchema = new mongoose.Schema(
     coupleStory: { type: String },
     engagementDate: { type: Date },
 
+    // Family tree (extended — richer than brideFamily/groomFamily)
+    family: {
+      bride: {
+        fatherName: { type: String },
+        motherName: { type: String },
+        photo: { type: String },
+      },
+      groom: {
+        fatherName: { type: String },
+        motherName: { type: String },
+        photo: { type: String },
+      },
+    },
+
+    // Travel & stay
+    travel: {
+      venueMapEmbed: { type: String },
+      notes: { type: String },
+      hotels: [
+        {
+          name: { type: String },
+          address: { type: String },
+          phone: { type: String },
+          distance: { type: String },
+        },
+      ],
+    },
+
+    // Gift registry
+    giftRegistry: [
+      {
+        label: { type: String },
+        url: { type: String },
+        icon: { type: String },
+        note: { type: String },
+      },
+    ],
+
     // Timeline
     timeline: [timelineSchema],
 

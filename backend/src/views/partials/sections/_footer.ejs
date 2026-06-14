@@ -1,0 +1,17 @@
+<%
+  // _footer.ejs — closing section
+  const dateObj = wedding.weddingDate ? new Date(wedding.weddingDate) : null;
+  const yearStr = dateObj ? dateObj.getFullYear() : '';
+%>
+<footer class="wsec wsec-footer" data-section="footer">
+  <div class="wsec-container gs-reveal">
+    <p class="wsec-footer-eyebrow">Thank you for being part of our story</p>
+    <h2 class="wsec-footer-names">
+      <span class="wsec-footer-name"><%= wedding.groomName || 'Groom' %></span>
+      <span class="wsec-footer-amp" aria-hidden="true">&amp;</span>
+      <span class="wsec-footer-name"><%= wedding.brideName || 'Bride' %></span>
+    </h2>
+    <% if (yearStr) { %><p class="wsec-footer-date"><%= yearStr %></p><% } %>
+    <p class="wsec-footer-made">Created with Wedding Cards</p>
+  </div>
+</footer>

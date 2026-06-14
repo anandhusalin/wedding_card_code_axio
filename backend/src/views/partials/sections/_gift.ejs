@@ -1,0 +1,49 @@
+<%
+  // _gift.ejs — gift registry with copy-to-clipboard for UPI IDs
+  const gifts = Array.isArray(wedding.giftRegistry) ? wedding.giftRegistry : [];
+  if (gifts.length === 0) return '';
+  // Heuristic: a gift is "copyable" if url doesn't start with http(s)://
+  const isCopyable = (url) => url && !/^https?:\/\//i.test(url);
+  const iconFor = (hint) => {
+    const h = (hint || '').toLowerCase();
+    if (h.includes('upi') || h.includes('bank') || h.includes('pay')) return 'i-link';
+    if (h.includes('amazon')) return 'i-gift';
+    if (h.includes('wedding')) return 'i-heart';
+    return 'i-gift';
+  };
+%>
+<section class="wsec wsec-gift" data-section="gift">
+  <div class="wsec-container">
+    <h2 class="wsec-eyebrow-heading gs-reveal">Gift Registry</h2>
+    <p class="wsec-gift-intro gs-reveal">Your presence is the greatest gift, but if you'd like to give, here are some options.</p>
+
+    <ul class="wsec-gift-list" role="list">
+      <% gifts.forEach(function (g, i) { %>
+        <% if (!g.label && !g.url) return; %>
+        <% const copyable = isCopyable(g.url); %>
+        <li class="wsec-gift-item gs-reveal">
+          <span class="wsec-gift-icon" aria-hidden="true">
+            <svg class="wsec-icon"><use href="#<%= iconFor(g.icon || g.label) %>"/></svg>
+          </span>
+          <div class="wsec-gift-body">
+            <% if (g.label) { %><h3 class="wsec-gift-label"><%= g.label %></h3><% } %>
+            <% if (g.url) { %>
+              <% if (copyable) { %>
+                <button type="button" class="wsec-gift-value wsec-gift-copy" data-copy="<%= g.url %>" aria-label="Copy <%= g.label || 'value' %>">
+                  <span class="wsec-gift-value-text"><%= g.url %></span>
+                  <svg class="wsec-icon" aria-hidden="true"><use href="#i-copy"/></svg>
+                </button>
+              <% } else { %>
+                <a class="wsec-gift-value" href="<%= g.url %>" target="_blank" rel="noopener">
+                  <span class="wsec-gift-value-text">Visit registry</span>
+                  <svg class="wsec-icon" aria-hidden="true"><use href="#i-chevron-right"/></svg>
+                </a>
+              <% } %>
+            <% } %>
+            <% if (g.note) { %><p class="wsec-gift-note"><%= g.note %></p><% } %>
+          </div>
+        </li>
+      <% }) %>
+    </ul>
+  </div>
+</section>

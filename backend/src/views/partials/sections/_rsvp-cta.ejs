@@ -1,0 +1,14 @@
+<%
+  // _rsvp-cta.ejs — large RSVP call-to-action (opens modal)
+  if (!wedding.isRsvpEnabled) return '';
+%>
+<section class="wsec wsec-rsvp" data-section="rsvp">
+  <div class="wsec-container gs-reveal">
+    <h2 class="wsec-rsvp-title">Will you join us?</h2>
+    <p class="wsec-rsvp-sub">Kindly let us know if you'll celebrate with us.</p>
+    <button class="wsec-btn wsec-btn-primary" type="button" onclick="openRsvpModal()">
+      <svg class="wsec-icon" aria-hidden="true"><use href="#i-rsvp"/></svg>
+      RSVP Now
+    </button>
+  </div>
+</section>

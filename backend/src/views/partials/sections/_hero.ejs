@@ -1,0 +1,55 @@
+<%
+  // _hero.ejs — full-bleed photo hero with countdown + scroll cue
+  // Expects: wedding, scope (CSS class for the section)
+  const fallbackPhoto = 'https://images.unsplash.com/photo-1519225421980-715cb0215aed?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80';
+  const photo = wedding.couplePhoto || fallbackPhoto;
+  const dateObj = wedding.weddingDate ? new Date(wedding.weddingDate) : null;
+  const longDate = dateObj
+    ? dateObj.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
+    : '';
+  const showCountdown = !!dateObj && !isNaN(dateObj.getTime());
+%>
+<header class="wsec wsec-hero" data-section="hero">
+  <div class="wsec-hero-bg" style="background-image:url('<%= photo %>');" role="presentation"></div>
+  <div class="wsec-hero-veil" aria-hidden="true"></div>
+  <div class="wsec-hero-inner gs-reveal">
+    <% if (wedding.invitationMessage && wedding.templateId === 'modern-elegant') { %>
+      <p class="wsec-eyebrow">We're getting married</p>
+    <% } else { %>
+      <p class="wsec-eyebrow">Together with their families</p>
+    <% } %>
+
+    <h1 class="wsec-names">
+      <span class="wsec-name wsec-name-groom"><%= wedding.groomName || 'Groom' %></span>
+      <span class="wsec-amp" aria-hidden="true">&amp;</span>
+      <span class="wsec-name wsec-name-bride"><%= wedding.brideName || 'Bride' %></span>
+    </h1>
+
+    <% if (longDate) { %>
+      <p class="wsec-date"><%= longDate %></p>
+    <% } %>
+
+    <% if (wedding.venue && wedding.venue.name) { %>
+      <p class="wsec-venue">
+        <svg class="wsec-icon-inline" aria-hidden="true"><use href="#i-pin"/></svg>
+        <%= wedding.venue.name %>
+      </p>
+    <% } %>
+
+    <% if (showCountdown) { %>
+      <div id="countdown" class="wsec-countdown" aria-label="Countdown to wedding">
+        <div class="wsec-cd-cell"><span class="wsec-cd-num" data-cd="days">00</span><span class="wsec-cd-lbl">Days</span></div>
+        <div class="wsec-cd-cell"><span class="wsec-cd-num" data-cd="hours">00</span><span class="wsec-cd-lbl">Hours</span></div>
+        <div class="wsec-cd-cell"><span class="wsec-cd-num" data-cd="minutes">00</span><span class="wsec-cd-lbl">Minutes</span></div>
+        <div class="wsec-cd-cell"><span class="wsec-cd-num" data-cd="seconds">00</span><span class="wsec-cd-lbl">Seconds</span></div>
+      </div>
+      <p id="countdownCelebrated" class="wsec-cd-celebrated" style="display:none;">Today we celebrate!</p>
+    <% } %>
+
+    <a href="#wsec-content" class="wsec-scroll-cue" aria-label="Scroll to content">
+      <span class="wsec-scroll-cue-text">Scroll</span>
+      <svg class="wsec-icon-inline" aria-hidden="true"><use href="#i-arrow-down"/></svg>
+    </a>
+  </div>
+</header>
+<a id="wsec-content" tabindex="-1" aria-hidden="true"></a>

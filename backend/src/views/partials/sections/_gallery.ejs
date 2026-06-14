@@ -1,0 +1,20 @@
+<%
+  // _gallery.ejs — photo grid (wedding.galleryPhotos) with lightbox trigger
+  const photos = Array.isArray(wedding.galleryPhotos) ? wedding.galleryPhotos : [];
+  const engagement = Array.isArray(wedding.engagementPhotos) ? wedding.engagementPhotos : [];
+  const allPhotos = photos.length ? photos : engagement;
+  if (allPhotos.length === 0) return '';
+%>
+<section class="wsec wsec-gallery" data-section="gallery">
+  <div class="wsec-container">
+    <h2 class="wsec-eyebrow-heading gs-reveal">Gallery</h2>
+    <div class="wsec-gallery-grid gs-reveal">
+      <% allPhotos.forEach(function (photo, i) { %>
+        <button class="wsec-gallery-item gallery-item" type="button" data-idx="<%= i %>" aria-label="Open photo <%= i + 1 %>">
+          <img src="<%= photo.url %>" alt="<%= photo.caption || 'Wedding photo ' + (i + 1) %>" loading="lazy">
+          <% if (photo.caption) { %><figcaption class="wsec-gallery-caption"><%= photo.caption %></figcaption><% } %>
+        </button>
+      <% }) %>
+    </div>
+  </div>
+</section>
