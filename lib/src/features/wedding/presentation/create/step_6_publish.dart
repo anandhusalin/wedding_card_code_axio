@@ -7,6 +7,8 @@ import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/constants/api_constants.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/primary_button.dart';
 import '../../data/wedding_repository.dart';
 import '../../domain/wedding_model.dart';
@@ -32,13 +34,8 @@ class _Step6PublishState extends ConsumerState<Step6Publish> {
     try {
       final repo = ref.read(weddingRepositoryProvider);
 
-      // Build a *copy* of the wedding data with API-friendly types, instead
-      // of mutating the shared map (which would break step_2 if the user
-      // navigates back).
       final payload = Map<String, dynamic>.from(widget.weddingData);
 
-      // Normalize the date: API expects an ISO-8601 string. The shared map
-      // may hold a DateTime (from step_2) or a String (revisited state).
       final rawDate = payload['weddingDate'];
       if (rawDate == null) {
         payload['weddingDate'] = DateTime.now().toIso8601String();
@@ -46,14 +43,10 @@ class _Step6PublishState extends ConsumerState<Step6Publish> {
         payload['weddingDate'] = rawDate.toIso8601String();
       }
 
-      // Default to "Unnamed" if missing required fields for the API
       payload['groomName'] ??= "Groom";
       payload['brideName'] ??= "Bride";
 
-      // Step 1: persist the wedding (server assigns slug + id)
       final created = await repo.createWedding(payload);
-
-      // Step 2: explicitly publish (backend create() leaves isPublished=false)
       final published = await repo.publishWedding(created.id, true);
 
       if (mounted) {
@@ -126,7 +119,6 @@ class _Step6PublishState extends ConsumerState<Step6Publish> {
 
   @override
   Widget build(BuildContext context) {
-    // Once published, show the celebration panel; otherwise show the publish button.
     if (_publishedWedding != null) {
       final url = ApiConstants.publicWeddingUrl(_publishedWedding!.slug);
       return _PublishedCelebration(
@@ -141,9 +133,51 @@ class _Step6PublishState extends ConsumerState<Step6Publish> {
     }
 
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const Text('Review your details and publish.'),
-        const SizedBox(height: 16),
+        Container(
+          padding: const EdgeInsets.all(AppTheme.space6),
+          decoration: BoxDecoration(
+            color: AppColors.primarySurface,
+            borderRadius: BorderRadius.circular(AppTheme.radiusXl),
+          ),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: AppColors.primary,
+                  borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                ),
+                child: const Icon(
+                  Icons.task_alt_rounded,
+                  color: Colors.white,
+                  size: 24,
+                ),
+              ),
+              const SizedBox(width: AppTheme.space4),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Ready to go live',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.w700,
+                          ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      'Review your details and publish. You can edit anytime afterwards.',
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: AppTheme.space6),
         PrimaryButton(
           onPressed: _publish,
           label: 'Publish Wedding',
@@ -175,122 +209,132 @@ class _PublishedCelebration extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+      padding: const EdgeInsets.symmetric(vertical: AppTheme.space4),
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 600),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const SizedBox(height: 24),
+            const SizedBox(height: AppTheme.space6),
             // Hero checkmark
             Center(
               child: Container(
-                width: 96,
-                height: 96,
+                width: 104,
+                height: 104,
                 decoration: BoxDecoration(
-                  color: Colors.green.shade50,
+                  gradient: AppColors.successGradient,
                   shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  Icons.check_circle,
-                  size: 72,
-                  color: Colors.green.shade600,
-                ),
-              ),
-            ),
-            const SizedBox(height: 24),
-            Text(
-              'Your wedding website is live!',
-              textAlign: TextAlign.center,
-              style: theme.textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Share this link with your guests so they can view your invitation.',
-              textAlign: TextAlign.center,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: Colors.grey.shade700,
-              ),
-            ),
-            const SizedBox(height: 24),
-
-            // The URL
-            Card(
-              elevation: 0,
-              color: Colors.amber.shade50,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-                side: BorderSide(color: Colors.amber.shade200),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: SelectableText(
-                        url,
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          fontWeight: FontWeight.w600,
-                          color: Colors.amber.shade900,
-                        ),
-                      ),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.copy),
-                      tooltip: 'Copy link',
-                      onPressed: onCopy,
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.success.withValues(alpha: 0.4),
+                      blurRadius: 32,
+                      offset: const Offset(0, 8),
                     ),
                   ],
                 ),
+                child: const Icon(
+                  Icons.check_rounded,
+                  size: 56,
+                  color: Colors.white,
+                ),
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppTheme.space6),
+            Text(
+              'Your wedding website is live!',
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: -0.3,
+                  ),
+            ),
+            const SizedBox(height: AppTheme.space2),
+            Text(
+              'Share this link with your guests so they can view your invitation.',
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
+            ),
+            const SizedBox(height: AppTheme.space6),
+
+            // The URL
+            Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppTheme.space4,
+                vertical: AppTheme.space2,
+              ),
+              decoration: BoxDecoration(
+                color: AppColors.primarySurface,
+                borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+                border: Border.all(
+                  color: AppColors.primary.withValues(alpha: 0.2),
+                ),
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: SelectableText(
+                      url,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.primaryDark,
+                          ),
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.copy_rounded),
+                    tooltip: 'Copy link',
+                    onPressed: onCopy,
+                    color: AppColors.primary,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: AppTheme.space4),
 
             // Primary actions
-            ElevatedButton.icon(
+            FilledButton.icon(
               onPressed: onOpen,
-              icon: const Icon(Icons.open_in_new),
+              icon: const Icon(Icons.open_in_new_rounded, size: 20),
               label: const Text('View Live Site'),
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 16),
+              style: FilledButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: AppTheme.space4),
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: AppTheme.space3),
             Row(
               children: [
                 Expanded(
                   child: OutlinedButton.icon(
                     onPressed: onQr,
-                    icon: const Icon(Icons.qr_code),
+                    icon: const Icon(Icons.qr_code_rounded, size: 18),
                     label: const Text('QR Code'),
                     style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      padding: const EdgeInsets.symmetric(vertical: AppTheme.space4),
                     ),
                   ),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: AppTheme.space3),
                 Expanded(
                   child: OutlinedButton.icon(
                     onPressed: onShare,
-                    icon: const Icon(Icons.share),
+                    icon: const Icon(Icons.share_rounded, size: 18),
                     label: const Text('Share'),
                     style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      padding: const EdgeInsets.symmetric(vertical: AppTheme.space4),
                     ),
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: AppTheme.space4),
             TextButton(
               onPressed: onDone,
               child: const Text('Done'),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: AppTheme.space4),
           ],
         ),
       ),

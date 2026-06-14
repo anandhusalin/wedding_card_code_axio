@@ -88,6 +88,9 @@ class WeddingRepository {
       final response = await _dio.post(
         ApiConstants.uploadImage,
         data: formData,
+        options: Options(
+          contentType: 'multipart/form-data',
+        ),
       );
 
       final urls = (response.data['data']['urls'] as List)

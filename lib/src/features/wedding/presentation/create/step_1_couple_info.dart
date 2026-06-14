@@ -1,16 +1,21 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/app_text_field.dart';
 import '../../../../core/utils/image_picker_service.dart';
+import '../../../../core/utils/validators.dart';
 import '../../data/wedding_repository.dart';
 
 class Step1CoupleInfo extends ConsumerStatefulWidget {
+  final GlobalKey<FormState>? formKey;
   final Map<String, dynamic> initialData;
   final Function(Map<String, dynamic>) onSaved;
 
   const Step1CoupleInfo({
     super.key,
+    this.formKey,
     required this.initialData,
     required this.onSaved,
   });
@@ -23,12 +28,10 @@ class _Step1CoupleInfoState extends ConsumerState<Step1CoupleInfo> {
   late TextEditingController _groomController;
   late TextEditingController _brideController;
 
-  String? _groomPhotoPath; // local path
-  String? _groomPhotoUrl;  // uploaded URL
-  
+  String? _groomPhotoPath;
+  String? _groomPhotoUrl;
   String? _bridePhotoPath;
   String? _bridePhotoUrl;
-  
   String? _couplePhotoPath;
   String? _couplePhotoUrl;
 
@@ -39,7 +42,7 @@ class _Step1CoupleInfoState extends ConsumerState<Step1CoupleInfo> {
     super.initState();
     _groomController = TextEditingController(text: widget.initialData['groomName']);
     _brideController = TextEditingController(text: widget.initialData['brideName']);
-    
+
     _groomPhotoUrl = widget.initialData['groomPhoto'];
     _bridePhotoUrl = widget.initialData['bridePhoto'];
     _couplePhotoUrl = widget.initialData['couplePhoto'];
@@ -65,7 +68,6 @@ class _Step1CoupleInfoState extends ConsumerState<Step1CoupleInfo> {
   Future<void> _pickAndUploadImage(String type) async {
     final picker = ref.read(imagePickerProvider);
     final path = await picker.pickImage();
-    
     if (path == null) return;
 
     setState(() {
@@ -78,7 +80,7 @@ class _Step1CoupleInfoState extends ConsumerState<Step1CoupleInfo> {
     try {
       final repo = ref.read(weddingRepositoryProvider);
       final urls = await repo.uploadImages([path]);
-      
+
       if (urls.isNotEmpty) {
         setState(() {
           if (type == 'groom') _groomPhotoUrl = urls.first;
@@ -100,28 +102,99 @@ class _Step1CoupleInfoState extends ConsumerState<Step1CoupleInfo> {
     }
   }
 
-  Widget _buildPhotoPicker(String label, String type, String? localPath, String? remoteUrl) {
+  Widget _buildPhotoPicker(
+    String label,
+    String type,
+    String? localPath,
+    String? remoteUrl, {
+    double size = 110,
+    bool isLandscape = false,
+  }) {
+    final hasImage = localPath != null || remoteUrl != null;
+    final cs = Theme.of(context).colorScheme;
+
     return Column(
       children: [
-        Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
-        const SizedBox(height: 8),
+        Text(
+          label,
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                fontWeight: FontWeight.w600,
+              ),
+        ),
+        const SizedBox(height: AppTheme.space3),
         GestureDetector(
           onTap: _isUploading ? null : () => _pickAndUploadImage(type),
           child: Container(
-            height: 120,
-            width: 120,
+            height: isLandscape ? 140 : size,
+            width: isLandscape ? double.infinity : size,
             decoration: BoxDecoration(
-              color: Colors.grey[200],
-              borderRadius: BorderRadius.circular(60),
-              image: localPath != null
-                  ? DecorationImage(image: FileImage(File(localPath)), fit: BoxFit.cover)
-                  : remoteUrl != null
-                      ? DecorationImage(image: NetworkImage(remoteUrl), fit: BoxFit.cover)
-                      : null,
+              color: isLandscape
+                  ? AppColors.primarySurface
+                  : cs.surface,
+              borderRadius: BorderRadius.circular(
+                isLandscape ? AppTheme.radiusXl : size,
+              ),
+              border: Border.all(
+                color: hasImage
+                    ? Colors.transparent
+                    : (Theme.of(context).brightness == Brightness.dark
+                        ? AppColors.slate700
+                        : AppColors.slate300),
+                width: 1.5,
+                style: hasImage ? BorderStyle.none : BorderStyle.solid,
+              ),
+              image: hasImage
+                  ? DecorationImage(
+                      image: localPath != null
+                          ? FileImage(File(localPath))
+                          : NetworkImage(remoteUrl!),
+                      fit: BoxFit.cover,
+                    )
+                  : null,
             ),
-            child: localPath == null && remoteUrl == null
-                ? const Icon(Icons.add_a_photo, size: 40, color: Colors.grey)
-                : null,
+            child: hasImage
+                ? Align(
+                    alignment: Alignment.bottomRight,
+                    child: Padding(
+                      padding: const EdgeInsets.all(AppTheme.space2),
+                      child: Container(
+                        padding: const EdgeInsets.all(6),
+                        decoration: BoxDecoration(
+                          color: Colors.black.withValues(alpha: 0.6),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.edit_rounded,
+                          color: Colors.white,
+                          size: 14,
+                        ),
+                      ),
+                    ),
+                  )
+                : Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          isLandscape
+                              ? Icons.add_photo_alternate_rounded
+                              : Icons.add_a_photo_rounded,
+                          size: isLandscape ? 28 : 28,
+                          color: AppColors.primary,
+                        ),
+                        if (isLandscape) ...[
+                          const SizedBox(height: 4),
+                          Text(
+                            'Tap to upload',
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodySmall
+                                ?.copyWith(color: AppColors.primary),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
           ),
         ),
       ],
@@ -130,32 +203,60 @@ class _Step1CoupleInfoState extends ConsumerState<Step1CoupleInfo> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        if (_isUploading) const LinearProgressIndicator(),
-        const SizedBox(height: 16),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            _buildPhotoPicker('Groom Photo', 'groom', _groomPhotoPath, _groomPhotoUrl),
-            _buildPhotoPicker('Bride Photo', 'bride', _bridePhotoPath, _bridePhotoUrl),
-          ],
-        ),
-        const SizedBox(height: 24),
-        AppTextField(
-          controller: _groomController,
-          label: 'Groom Name',
-          onChanged: (_) => _save(),
-        ),
-        const SizedBox(height: 16),
-        AppTextField(
-          controller: _brideController,
-          label: 'Bride Name',
-          onChanged: (_) => _save(),
-        ),
-        const SizedBox(height: 24),
-        _buildPhotoPicker('Main Couple Cover Photo (Landscape)', 'couple', _couplePhotoPath, _couplePhotoUrl),
-      ],
+    return Form(
+      key: widget.formKey,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          if (_isUploading)
+            Padding(
+              padding: const EdgeInsets.only(bottom: AppTheme.space4),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(AppTheme.radiusFull),
+                child: const LinearProgressIndicator(minHeight: 3),
+              ),
+            ),
+          // ─── Photo row ─────────────────────────────────────
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              _buildPhotoPicker('Groom', 'groom', _groomPhotoPath, _groomPhotoUrl),
+              _buildPhotoPicker('Bride', 'bride', _bridePhotoPath, _bridePhotoUrl),
+            ],
+          ),
+          const SizedBox(height: AppTheme.space8),
+
+          // ─── Name fields ───────────────────────────────────
+          AppTextField(
+            controller: _groomController,
+            label: 'Groom name',
+            hint: 'e.g. John',
+            prefixIcon: Icons.person_outline_rounded,
+            validator: (v) => Validators.validateName(v),
+            onChanged: (_) => _save(),
+          ),
+          const SizedBox(height: AppTheme.space4),
+          AppTextField(
+            controller: _brideController,
+            label: 'Bride name',
+            hint: 'e.g. Jane',
+            prefixIcon: Icons.person_outline_rounded,
+            validator: (v) => Validators.validateName(v),
+            onChanged: (_) => _save(),
+          ),
+          const SizedBox(height: AppTheme.space8),
+
+          // ─── Cover photo ───────────────────────────────────
+          _buildPhotoPicker(
+            'Main cover photo',
+            'couple',
+            _couplePhotoPath,
+            _couplePhotoUrl,
+            isLandscape: true,
+          ),
+        ],
+      ),
     );
   }
 }

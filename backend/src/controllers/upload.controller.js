@@ -47,6 +47,7 @@ const upload = async (req, res, next) => {
       success: true,
       data: {
         images: results,
+        urls: results.map((img) => img.url),
         count: results.length,
       },
     });

@@ -24,9 +24,9 @@ const upload = multer({
   },
 });
 
-// POST /api/v1/upload — Upload images (authenticated)
+// POST /api/v1/upload or /api/v1/upload/image — Upload images (authenticated)
 router.post(
-  '/',
+  ['/', '/image'],
   authMiddleware,
   upload.array('images', MAX_IMAGES_PER_UPLOAD),
   uploadController.upload

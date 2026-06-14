@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_theme.dart';
+import '../../../core/utils/responsive.dart';
+import '../../../core/utils/validators.dart';
 import '../../../core/widgets/app_text_field.dart';
 import '../../../core/widgets/primary_button.dart';
-import '../../../core/utils/validators.dart';
 import 'auth_controller.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -31,10 +34,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   void _submit() {
     if (!_formKey.currentState!.validate()) return;
-    
+    HapticFeedback.lightImpact();
     final email = _emailController.text.trim();
     final password = _passwordController.text;
-    
     if (_isLogin) {
       ref.read(authControllerProvider.notifier).login(email, password);
     } else {
@@ -47,6 +49,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   Widget build(BuildContext context) {
     final authState = ref.watch(authControllerProvider);
     final isLoading = authState.isLoading;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     ref.listen(authControllerProvider, (previous, next) {
       if (next is AsyncError) {
@@ -59,96 +62,236 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       }
     });
 
+    final maxWidth = Responsive.contentMaxWidth(context);
+
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
-          color: Theme.of(context).scaffoldBackgroundColor,
+          gradient: isDark ? AppColors.darkBackgroundGradient : null,
+          color: isDark ? null : AppColors.backgroundLight,
         ),
-        child: SafeArea(
-          child: Center(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(24.0),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Icon(
-                      Icons.favorite,
-                      size: 64,
-                      color: AppColors.primary,
-                    ).animate().scale(duration: 500.ms, curve: Curves.easeOutBack),
-                    const SizedBox(height: 16),
-                    Text(
-                      'Wedding Cards',
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                        color: AppColors.primary,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ).animate().fadeIn(delay: 200.ms),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Create Beautiful Wedding Websites',
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        color: Colors.grey[600],
-                      ),
-                    ).animate().fadeIn(delay: 400.ms),
-                    const SizedBox(height: 48),
-                    
-                    if (!_isLogin)
-                      AppTextField(
-                        controller: _nameController,
-                        label: 'Full Name',
-                        prefixIcon: Icons.person_outline,
-                        validator: Validators.validateRequired,
-                      ).animate().slideY(begin: 0.2, duration: 300.ms).fadeIn(),
-                    if (!_isLogin) const SizedBox(height: 16),
-                    
-                    AppTextField(
-                      controller: _emailController,
-                      label: 'Email',
-                      keyboardType: TextInputType.emailAddress,
-                      prefixIcon: Icons.email_outlined,
-                      validator: Validators.validateEmail,
-                    ).animate().slideY(begin: 0.2, delay: 100.ms, duration: 300.ms).fadeIn(),
-                    const SizedBox(height: 16),
-                    
-                    AppTextField(
-                      controller: _passwordController,
-                      label: 'Password',
-                      obscureText: true,
-                      prefixIcon: Icons.lock_outline,
-                      validator: Validators.validatePassword,
-                    ).animate().slideY(begin: 0.2, delay: 200.ms, duration: 300.ms).fadeIn(),
-                    const SizedBox(height: 32),
-                    
-                    PrimaryButton(
-                      onPressed: _submit,
-                      label: _isLogin ? 'Login' : 'Register',
-                      isLoading: isLoading,
-                    ).animate().slideY(begin: 0.2, delay: 300.ms, duration: 300.ms).fadeIn(),
-                    
-                    const SizedBox(height: 24),
-                    TextButton(
-                      onPressed: () {
-                        setState(() {
-                          _isLogin = !_isLogin;
-                        });
-                      },
-                      child: Text(
-                        _isLogin
-                            ? 'Don\'t have an account? Register'
-                            : 'Already have an account? Login',
-                      ),
-                    ).animate().fadeIn(delay: 400.ms),
-                  ],
+        child: Stack(
+          children: [
+            // ─── Decorative gradient blob ───────────────────────────
+            Positioned(
+              top: -120,
+              right: -120,
+              child: Container(
+                width: 320,
+                height: 320,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: RadialGradient(
+                    colors: [
+                      AppColors.primary.withValues(alpha: isDark ? 0.25 : 0.15),
+                      AppColors.primary.withValues(alpha: 0),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
+            Positioned(
+              bottom: -100,
+              left: -100,
+              child: Container(
+                width: 280,
+                height: 280,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: RadialGradient(
+                    colors: [
+                      AppColors.secondary.withValues(alpha: isDark ? 0.25 : 0.12),
+                      AppColors.secondary.withValues(alpha: 0),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+
+            SafeArea(
+              child: Center(
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: Responsive.pagePadding(context),
+                    vertical: AppTheme.space8,
+                  ),
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(maxWidth: maxWidth),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          const SizedBox(height: AppTheme.space8),
+
+                          // ─── Brand mark ─────────────────────────────
+                          Center(
+                            child: Container(
+                              width: 88,
+                              height: 88,
+                              decoration: BoxDecoration(
+                                gradient: AppColors.brandGradient,
+                                borderRadius:
+                                    BorderRadius.circular(AppTheme.radius2xl),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: AppColors.primary
+                                        .withValues(alpha: 0.3),
+                                    blurRadius: 24,
+                                    offset: const Offset(0, 8),
+                                  ),
+                                ],
+                              ),
+                              child: const Icon(
+                                Icons.favorite_rounded,
+                                color: Colors.white,
+                                size: 40,
+                              ),
+                            )
+                                .animate()
+                                .scale(
+                                  duration: 500.ms,
+                                  curve: Curves.easeOutBack,
+                                ),
+                          ),
+                          const SizedBox(height: AppTheme.space6),
+
+                          // ─── Title ─────────────────────────────────
+                          Text(
+                            _isLogin ? 'Welcome back' : 'Create account',
+                            textAlign: TextAlign.center,
+                            style: Theme.of(context)
+                                .textTheme
+                                .headlineMedium
+                                ?.copyWith(
+                                  fontWeight: FontWeight.w700,
+                                  letterSpacing: -0.5,
+                                ),
+                          ).animate().fadeIn(delay: 150.ms, duration: 400.ms),
+                          const SizedBox(height: AppTheme.space2),
+                          Text(
+                            _isLogin
+                                ? 'Sign in to continue to Wedding Cards'
+                                : 'Get started in less than a minute',
+                            textAlign: TextAlign.center,
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium
+                                ?.copyWith(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onSurfaceVariant,
+                                ),
+                          ).animate().fadeIn(delay: 250.ms, duration: 400.ms),
+
+                          const SizedBox(height: AppTheme.space10),
+
+                          // ─── Form Card ────────────────────────────
+                          Container(
+                            padding: const EdgeInsets.all(AppTheme.space6),
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).colorScheme.surface,
+                              borderRadius:
+                                  BorderRadius.circular(AppTheme.radius2xl),
+                              border: Border.all(
+                                color: isDark
+                                    ? AppColors.slate800
+                                    : AppColors.slate200,
+                                width: 1,
+                              ),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                if (!_isLogin) ...[
+                                  AppTextField(
+                                    controller: _nameController,
+                                    label: 'Full name',
+                                    hint: 'John Doe',
+                                    prefixIcon: Icons.person_outline_rounded,
+                                    validator: Validators.validateRequired,
+                                  )
+                                      .animate()
+                                      .slideY(
+                                        begin: 0.1,
+                                        duration: 300.ms,
+                                      )
+                                      .fadeIn(),
+                                  const SizedBox(height: AppTheme.space4),
+                                ],
+
+                                AppTextField(
+                                  controller: _emailController,
+                                  label: 'Email',
+                                  hint: 'you@example.com',
+                                  keyboardType: TextInputType.emailAddress,
+                                  prefixIcon: Icons.alternate_email_rounded,
+                                  validator: Validators.validateEmail,
+                                ).animate().fadeIn(delay: 100.ms, duration: 400.ms),
+                                const SizedBox(height: AppTheme.space4),
+
+                                AppTextField(
+                                  controller: _passwordController,
+                                  label: 'Password',
+                                  obscureText: true,
+                                  prefixIcon: Icons.lock_outline_rounded,
+                                  validator: Validators.validatePassword,
+                                ).animate().fadeIn(delay: 200.ms, duration: 400.ms),
+                                const SizedBox(height: AppTheme.space6),
+
+                                PrimaryButton(
+                                  onPressed: _submit,
+                                  label: _isLogin ? 'Sign in' : 'Create account',
+                                  isLoading: isLoading,
+                                ).animate().fadeIn(delay: 300.ms, duration: 400.ms),
+                              ],
+                            ),
+                          ).animate().fadeIn(delay: 350.ms, duration: 500.ms).slideY(begin: 0.05),
+
+                          const SizedBox(height: AppTheme.space6),
+
+                          // ─── Toggle ─────────────────────────────────
+                          TextButton(
+                            onPressed: () {
+                              setState(() => _isLogin = !_isLogin);
+                            },
+                            child: Text.rich(
+                              TextSpan(
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium
+                                    ?.copyWith(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSurfaceVariant,
+                                    ),
+                                children: [
+                                  TextSpan(
+                                    text: _isLogin
+                                        ? "Don't have an account? "
+                                        : 'Already have an account? ',
+                                  ),
+                                  TextSpan(
+                                    text: _isLogin ? 'Sign up' : 'Sign in',
+                                    style: TextStyle(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .primary,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ).animate().fadeIn(delay: 500.ms, duration: 400.ms),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
