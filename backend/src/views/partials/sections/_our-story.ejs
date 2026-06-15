@@ -1,0 +1,30 @@
+<%
+  // _our-story.ejs — dedicated "Our Story / How we met" section.
+  // Renders the existing wedding.coupleStory field as a full
+  // standalone section. Skipped if coupleStory is empty.
+  if (!wedding.coupleStory) return '';
+  // Split into paragraphs on blank lines if the user wrote multiple;
+  // otherwise wrap the single string in a paragraph.
+  const raw = String(wedding.coupleStory).trim();
+  const paragraphs = raw.split(/\n\s*\n/).map(p => p.trim()).filter(Boolean);
+%>
+<section class="wsec wsec-our-story" data-section="our-story">
+  <div class="wsec-container">
+    <span class="wsec-eyebrow">Our Story</span>
+    <h2 class="wsec-eyebrow-heading gs-reveal">How we met</h2>
+
+    <div class="wsec-our-story-body gs-reveal">
+      <% paragraphs.forEach(function (p) { %>
+        <p><%= p %></p>
+      <% }); %>
+    </div>
+
+    <div class="wsec-divider wsec-our-story-divider" aria-hidden="true">
+      <span class="wsec-divider-mark">&#10070;</span>
+    </div>
+
+    <p class="wsec-our-story-attrib gs-reveal">
+      with love, <%= wedding.groomName || 'Groom' %> &amp; <%= wedding.brideName || 'Bride' %>
+    </p>
+  </div>
+</section>

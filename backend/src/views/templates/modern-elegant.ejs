@@ -126,6 +126,25 @@
   }
   .modern-elegant-template .wsec-story-attrib { color: var(--me-muted); font-size: 0.9rem; letter-spacing: 2px; }
 
+  /* OUR STORY */
+  .modern-elegant-template .wsec-our-story { background: var(--me-soft); }
+  .modern-elegant-template .wsec-our-story .wsec-eyebrow { color: var(--me-muted); }
+  .modern-elegant-template .wsec-our-story-body { max-width: 660px; margin: 0 auto; text-align: left; }
+  .modern-elegant-template .wsec-our-story-body p {
+    font-family: 'Fraunces', serif; font-weight: 300;
+    font-size: clamp(1.05rem, 2.4vw, 1.3rem);
+    color: var(--me-fg); line-height: 1.75; margin: 0 0 18px;
+  }
+  .modern-elegant-template .wsec-our-story-body p:last-child { margin-bottom: 0; }
+  .modern-elegant-template .wsec-our-story-divider { margin: 32px auto 20px; }
+  .modern-elegant-template .wsec-our-story-divider::before,
+  .modern-elegant-template .wsec-our-story-divider::after { background: var(--me-line); }
+  .modern-elegant-template .wsec-our-story-divider .wsec-divider-mark { color: var(--me-fg); font-style: italic; }
+  .modern-elegant-template .wsec-our-story-attrib {
+    text-align: center; font-family: 'Inter', sans-serif; font-size: 11px;
+    color: var(--me-muted); letter-spacing: 0.25em; text-transform: uppercase;
+  }
+
   /* FAMILY */
   .modern-elegant-template .wsec-family { background: var(--me-soft); }
   .modern-elegant-template .wsec-family-grid {
@@ -370,6 +389,7 @@
   /* RESPONSIVE */
   /* Tablet (≤900px): single-column couple + family, 2-col gallery. */
   @media (max-width: 900px) {
+    .modern-elegant-template .wsec { padding: clamp(56px, 12vw, 88px) 0; }
     .modern-elegant-template .wsec-hero { grid-template-columns: 1fr; min-height: auto; }
     .modern-elegant-template .wsec-hero::after { aspect-ratio: 4/5; min-height: 60vh; order: -1; }
     .modern-elegant-template .wsec-hero-inner { padding: 48px 28px; }
@@ -387,6 +407,7 @@
     .modern-elegant-template .wsec-cd-num { font-size: 1.8rem; }
   }
   @media (max-width: 480px) {
+    .modern-elegant-template .wsec { padding: clamp(48px, 16vw, 64px) 0; }
     .modern-elegant-template .wsec-hero-inner { padding: 32px 20px; }
     .modern-elegant-template .wsec-gallery-grid { grid-template-columns: 1fr; }
     .modern-elegant-template .wsec-event-card { padding: 36px 20px; }
@@ -401,6 +422,7 @@
 
   <main>
     <%- include('../partials/sections/_couple', { wedding }) %>
+    <%- include('../partials/sections/_our-story', { wedding }) %>
 
     <%- include('../partials/sections/_family', { wedding }) %>
 

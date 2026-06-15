@@ -33,6 +33,22 @@
 
   --container: 1100px;
   --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* ---------- Knot design system (The Knot–inspired shared tokens) ----------
+     All 4 templates opt into these. They define the type pairing, section
+     rhythm, container width, and the canonical frame radius. Templates
+     override per-component where their personality requires (e.g. royal
+     uses --knot-radius-frame: 0 for a square frame). */
+  --knot-display: 'Dancing Script', 'Pinyon Script', cursive;  /* signature script */
+  --knot-serif:   'Cormorant Garamond', 'Playfair Display', Georgia, serif;
+  --knot-sans:    'Inter', system-ui, -apple-system, sans-serif;
+  --knot-pad-section: clamp(72px, 10vw, 130px);
+  --knot-pad-section-tablet: clamp(56px, 12vw, 88px);
+  --knot-pad-section-mobile: clamp(48px, 16vw, 64px);
+  --knot-container: 1100px;
+  --knot-radius-frame: 4px;
+  --knot-eyebrow-size: 11px;
+  --knot-eyebrow-tracking: 4px;
 }
 
 /* ---------- Reset ---------- */
@@ -66,6 +82,52 @@ img { max-width: 100%; display: block; }
 /* ---------- Section utility (used by every template) ---------- */
 .wsec { position: relative; }
 .wsec-container { max-width: var(--container); margin: 0 auto; padding: 0 24px; }
+
+/* ---------- Knot shared utilities (opt-in per template) ---------- */
+/* Uppercase tracked label that sits above an h2. Templates set its
+   color via their own muted color variable. */
+.wsec-eyebrow {
+  display: block;
+  font-family: var(--knot-sans);
+  font-size: var(--knot-eyebrow-size);
+  letter-spacing: var(--knot-eyebrow-tracking);
+  text-transform: uppercase;
+  color: var(--fr-muted, var(--rm-gold, var(--me-muted, var(--tk-muted, var(--muted)))));
+  margin: 0 0 18px;
+  font-weight: 500;
+  text-align: center;
+}
+/* Decorative section divider. Templates pick a mark by overriding
+   --knot-divider-glyph. Renders as a centered glyph with rules on
+   either side, like a Knot section break. */
+.wsec-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin: 0 auto;
+  max-width: 240px;
+  color: var(--fr-primary, var(--rm-gold, var(--me-fg, var(--tk-gold, var(--muted)))));
+  font-family: var(--knot-serif);
+  font-size: 18px;
+}
+.wsec-divider::before,
+.wsec-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.4;
+}
+.wsec-divider-mark {
+  display: inline-block;
+  font-style: italic;
+  letter-spacing: 0.05em;
+  font-size: 14px;
+}
+/* Scroll-reveal: templates that prefer the cinematic variant use this
+   class on top of .gs-reveal to slow the entry. */
+.wsec-reveal { transition-duration: 1s ease; }
 
 /* ---------- Inline SVG icon defaults ---------- */
 .wsec-icon, .wsec-icon-inline {
