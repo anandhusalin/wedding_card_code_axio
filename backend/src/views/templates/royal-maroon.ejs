@@ -357,6 +357,13 @@
   .royal-maroon-template .wsec-music-toggle .wsec-icon { width: 22px; height: 22px; }
 
   /* RESPONSIVE */
+  /* Tablet (≤768px): tighten hero names and hero inner padding for
+     iPad portrait — falls between the 900px and 640px breakpoints. */
+  @media (max-width: 768px) {
+    .royal-maroon-template .wsec-names { font-size: clamp(2.2rem, 7vw, 3.4rem); }
+    .royal-maroon-template .wsec-hero-inner { padding: 56px 32px; }
+    .royal-maroon-template .wsec-eyebrow-heading { font-size: clamp(1.6rem, 4vw, 2.4rem); }
+  }
   /* Tablet (≤900px): single-column couple + family, 2-col gallery. */
   @media (max-width: 900px) {
     .royal-maroon-template .wsec { padding: clamp(56px, 12vw, 88px) 0; }
@@ -373,18 +380,23 @@
   }
   /* Small phone (≤640px): tighter hero text + countdown. */
   @media (max-width: 640px) {
+    .royal-maroon-template .wsec-names { font-size: clamp(2.2rem, 8vw, 3rem); letter-spacing: 0.04em; }
     .royal-maroon-template .wsec-cd-cell { padding: 10px 12px; min-width: 64px; }
     .royal-maroon-template .wsec-cd-num { font-size: 1.8rem; }
   }
   @media (max-width: 480px) {
     .royal-maroon-template .wsec { padding: clamp(48px, 16vw, 64px) 0; }
     .royal-maroon-template .wsec-hero-inner { padding: 40px 18px; }
+    .royal-maroon-template .wsec-eyebrow-heading { font-size: clamp(1.8rem, 8vw, 2.6rem); }
     .royal-maroon-template .wsec-gallery-grid { grid-template-columns: 1fr; }
     .royal-maroon-template .wsec-event-card { padding: 36px 20px; }
     .royal-maroon-template .wsec-timeline-item { grid-template-columns: 1fr; gap: 8px; }
     .royal-maroon-template .wsec-wishes-form { padding: 0 4px; }
     .royal-maroon-template .wsec-wishes-form input,
     .royal-maroon-template .wsec-wishes-form textarea { font-size: 16px; }
+    .royal-maroon-template .wsec-wishes-form button { width: 100%; padding: 14px 20px; }
+    .royal-maroon-template .wsec-gift-card { padding: 28px 18px; }
+    .royal-maroon-template .wsec-btn { padding: 12px 24px; font-size: 13px; }
   }
 </style>
 

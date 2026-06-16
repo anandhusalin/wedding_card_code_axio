@@ -195,13 +195,11 @@ class TemplatePreview extends StatelessWidget {
 class _SectionWrap extends StatelessWidget {
   final TemplateTheme t;
   final Color? bg;
-  final EdgeInsets padding;
   final Widget child;
   const _SectionWrap({
     required this.t,
     required this.child,
     this.bg,
-    this.padding = const EdgeInsets.symmetric(vertical: 28, horizontal: 20),
   });
 
   @override
@@ -209,7 +207,7 @@ class _SectionWrap extends StatelessWidget {
     return Container(
       width: double.infinity,
       color: bg ?? t.bg,
-      padding: padding,
+      padding: const EdgeInsets.symmetric(vertical: 28, horizontal: 20),
       child: child,
     );
   }
@@ -257,8 +255,7 @@ class _Heading extends StatelessWidget {
 
 class _Divider extends StatelessWidget {
   final TemplateTheme t;
-  final String mark;
-  const _Divider(this.t, {this.mark = '◆'});
+  const _Divider(this.t);
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -268,7 +265,7 @@ class _Divider extends StatelessWidget {
           Expanded(child: Container(height: 1, color: t.accent.withValues(alpha: 0.5))),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10),
-            child: Text(mark, style: TextStyle(color: t.primary, fontSize: 11)),
+            child: Text('◆', style: TextStyle(color: t.primary, fontSize: 11)),
           ),
           Expanded(child: Container(height: 1, color: t.accent.withValues(alpha: 0.5))),
         ],

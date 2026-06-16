@@ -47,6 +47,48 @@ describe('Render — each template renders without error', () => {
       expect(res.text).toMatch(new RegExp(`class="[^"]*${t}-template`));
     }
   });
+
+  test('all templates include the _our-story partial with proper CSS', async () => {
+    for (const t of TEMPLATES) {
+      const w = makeWedding({
+        templateId: t,
+        slug: `ourstory-${t}`,
+        coupleStory: 'A love story.',
+      });
+      app.locals.stubs.wedding = w;
+      const res = await request(app).get('/' + w.slug).expect(200);
+      // Partial renders the story
+      expect(res.text).toContain('A love story.');
+      // Section uses wsec-our-story class
+      expect(res.text).toMatch(/<section[^>]*wsec-our-story/);
+      // CSS rule exists for this template
+      expect(res.text).toMatch(new RegExp(`\\.${t}-template \\.wsec-our-story\\s*\\{`));
+    }
+  });
+
+  test('all templates declare 900/768/640/480 breakpoints', async () => {
+    for (const t of TEMPLATES) {
+      const w = makeWedding({ templateId: t, slug: `bp-${t}` });
+      app.locals.stubs.wedding = w;
+      const res = await request(app).get('/' + w.slug).expect(200);
+      expect(res.text).toMatch(/@media \(max-width: 900px\)/);
+      expect(res.text).toMatch(/@media \(max-width: 768px\)/);
+      expect(res.text).toMatch(/@media \(max-width: 640px\)/);
+      expect(res.text).toMatch(/@media \(max-width: 480px\)/);
+    }
+  });
+
+  test('wishes form button is full-width on mobile', async () => {
+    for (const t of TEMPLATES) {
+      const w = makeWedding({ templateId: t, slug: `wishes-btn-${t}` });
+      app.locals.stubs.wedding = w;
+      const res = await request(app).get('/' + w.slug).expect(200);
+      // The 480px block has wishes-form button at width: 100%
+      expect(res.text).toMatch(
+        /@media \(max-width: 480px\) \{[^}]*wsec-wishes-form\s+button[^}]*width: 100%/
+      );
+    }
+  });
 });
 
 describe('Render — section partials include all expected parts', () => {

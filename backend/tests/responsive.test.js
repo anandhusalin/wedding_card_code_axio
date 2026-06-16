@@ -133,3 +133,42 @@ describe('Our Story section — each template includes + styles it', () => {
     expect(partial).toMatch(/wsec-our-story/);
   });
 });
+
+describe('Responsive — every template has 900/768/640/480 breakpoints', () => {
+  const fsLocal = require('fs');
+  const templates = ['modern-elegant', 'traditional-kerala', 'floral-romance', 'royal-maroon'];
+  const pathLocal = require('path');
+
+  test.each(templates)('%s declares all 4 breakpoints', (id) => {
+    const css = fsLocal.readFileSync(
+      pathLocal.join(__dirname, '..', 'src', 'views', 'templates', id + '.ejs'),
+      'utf8'
+    );
+    expect(css).toMatch(/@media\s*\(\s*max-width:\s*900px\s*\)/);
+    expect(css).toMatch(/@media\s*\(\s*max-width:\s*768px\s*\)/);
+    expect(css).toMatch(/@media\s*\(\s*max-width:\s*640px\s*\)/);
+    expect(css).toMatch(/@media\s*\(\s*max-width:\s*480px\s*\)/);
+  });
+});
+
+describe('Responsive — 480px wishes form & buttons are mobile-friendly', () => {
+  const fsLocal = require('fs');
+  const templates = ['modern-elegant', 'traditional-kerala', 'floral-romance', 'royal-maroon'];
+  const pathLocal = require('path');
+
+  test.each(templates)('%s: wishes button is full-width on mobile', (id) => {
+    const css = fsLocal.readFileSync(
+      pathLocal.join(__dirname, '..', 'src', 'views', 'templates', id + '.ejs'),
+      'utf8'
+    );
+    expect(css).toMatch(/@media\s*\(\s*max-width:\s*480px\s*\)\s*\{[\s\S]*?wsec-wishes-form\s+button\s*\{[\s\S]*?width:\s*100%/);
+  });
+
+  test.each(templates)('%s: hero h2 shrinks on mobile', (id) => {
+    const css = fsLocal.readFileSync(
+      pathLocal.join(__dirname, '..', 'src', 'views', 'templates', id + '.ejs'),
+      'utf8'
+    );
+    expect(css).toMatch(/@media\s*\(\s*max-width:\s*480px\s*\)\s*\{[\s\S]*?wsec-eyebrow-heading\s*\{[\s\S]*?font-size/);
+  });
+});

@@ -116,4 +116,32 @@ describe('XSS — user fields are escaped on render', () => {
     const res = await request(app).get('/xss').expect(200);
     expect(res.text).not.toMatch(/<script>window\.__pwned/);
   });
+
+  test('coupleStory with raw HTML is escaped across all templates', async () => {
+    for (const templateId of ['floral-romance', 'royal-maroon', 'modern-elegant', 'traditional-kerala']) {
+      const app = createTestApp();
+      app.locals.stubs.wedding = makeWedding({
+        templateId,
+        slug: `xss-story-${templateId}`,
+        coupleStory: SCRIPT,
+      });
+      const res = await request(app).get(`/xss-story-${templateId}`).expect(200);
+      // No live <script> tag fires
+      expect(res.text).not.toMatch(/<script>window\.__pwned\s*=\s*true<\/script>/);
+      // Escaped form present
+      expect(res.text).toMatch(/&lt;script&gt;|\\u003cscript\\u003e/);
+    }
+  });
+
+  test('coupleStory img onerror payload is escaped', async () => {
+    const app = createTestApp();
+    app.locals.stubs.wedding = makeWedding({
+      templateId: 'floral-romance',
+      slug: 'xss-story-img',
+      coupleStory: IMG_ONERROR,
+    });
+    const res = await request(app).get('/xss-story-img').expect(200);
+    expect(res.text).not.toMatch(/onerror="window\.__pwned/);
+    expect(res.text).toMatch(/&lt;img\s+src=x/);
+  });
 });
