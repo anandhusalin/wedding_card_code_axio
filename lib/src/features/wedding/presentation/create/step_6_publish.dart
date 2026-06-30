@@ -6,7 +6,7 @@ import 'package:pretty_qr_code/pretty_qr_code.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../../../core/constants/api_constants.dart';
+import '../../../../core/config/app_config.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/primary_button.dart';
@@ -146,7 +146,8 @@ class _Step6PublishState extends ConsumerState<Step6Publish> {
   @override
   Widget build(BuildContext context) {
     if (_publishedWedding != null) {
-      final url = ApiConstants.publicWeddingUrl(_publishedWedding!.slug);
+      final config = ref.read(appConfigProvider);
+      final url = '${config.publicBaseUrl}/${_publishedWedding!.slug}';
       return _PublishedCelebration(
         wedding: _publishedWedding!,
         url: url,

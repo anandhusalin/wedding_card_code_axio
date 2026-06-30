@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../config/app_config.dart';
 import '../constants/api_constants.dart';
 import '../constants/app_constants.dart';
 import 'api_interceptors.dart';
@@ -26,13 +27,18 @@ FlutterSecureStorage secureStorage(Ref ref) {
 /// Provider for the configured Dio HTTP client instance.
 /// Includes JWT auth interceptor, logging interceptor (debug only),
 /// appropriate timeouts, and JSON content type.
+///
+/// The base URL is read from the AppConfig so dev builds automatically
+/// point at the local backend (10.0.2.2:3000) and prod builds at the
+/// deployed Railway API. Overridable via --dart-define=API_BASE_URL.
 @riverpod
 Dio dio(Ref ref) {
   final storage = ref.watch(secureStorageProvider);
+  final config = ref.watch(appConfigProvider);
 
   final dio = Dio(
     BaseOptions(
-      baseUrl: ApiConstants.resolvedBaseUrl,
+      baseUrl: config.apiBaseUrl,
       connectTimeout:
           const Duration(milliseconds: ApiConstants.connectionTimeoutMs),
       receiveTimeout:

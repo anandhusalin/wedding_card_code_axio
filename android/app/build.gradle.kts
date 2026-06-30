@@ -37,6 +37,32 @@ android {
             signingConfig = signingConfigs.getByName("debug")
         }
     }
+
+    // ─── Product flavors: dev / prod ───────────────────────────────
+    // Dev uses a .dev applicationId suffix and a different app name so
+    // it can coexist on the same device with the production build.
+    flavorDimensions += "env"
+    productFlavors {
+        create("dev") {
+            dimension = "env"
+            applicationIdSuffix = ".dev"
+            versionNameSuffix = "-dev"
+            // Dev builds default to the local backend (10.0.2.2:3000 is
+            // the Android emulator alias for the host machine's localhost).
+            // Override at run time with: --dart-define=API_BASE_URL=...
+            resValue("string", "default_api_base_url", "http://10.0.2.2:3000")
+        }
+        create("prod") {
+            dimension = "env"
+            // Production keeps the default applicationId and points at
+            // the deployed Railway API by default.
+            resValue(
+                "string",
+                "default_api_base_url",
+                "https://wedding-cards-api-production.up.railway.app"
+            )
+        }
+    }
 }
 
 flutter {

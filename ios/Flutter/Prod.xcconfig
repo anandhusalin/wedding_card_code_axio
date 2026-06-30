@@ -1,0 +1,10 @@
+# Prod flavor build configuration.
+#
+# Production iOS build. Requires a "Runner-Prod" Xcode scheme (Product →
+# Scheme → Manage Schemes → +) pointing at this xcconfig. The default
+# Runner scheme keeps working unchanged; this file is only consumed
+# when the dev scheme is used to build a dev variant.
+#include "Generated.xcconfig"
+PRODUCT_BUNDLE_IDENTIFIER = com.weddingcards.wedding_cards
+PRODUCT_NAME = Wedding Cards
+APIPREFIX = https://wedding-cards-api-production.up.railway.app

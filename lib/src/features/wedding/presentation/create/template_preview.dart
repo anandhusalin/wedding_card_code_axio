@@ -157,34 +157,96 @@ class TemplatePreview extends StatelessWidget {
   }
 
   /// Build a [Wedding] model from the in-flight create-wizard Map.
+  /// Converts a raw `Map<String, dynamic>` from the wedding wizard into
+  /// typed objects. The wizard stores everything as raw Maps for flexibility
+  /// between steps, but the preview needs typed instances.
+  Venue? _safeVenue(Map? m) {
+    if (m == null) return null;
+    try {
+      return Venue(
+        name: m['name'] as String? ?? '',
+        address: m['address'] as String? ?? '',
+        mapUrl: m['mapUrl'] as String? ?? '',
+      );
+    } catch (_) {
+      return null; // Preview should never crash on partial data
+    }
+  }
+
+  FamilyInfo? _safeFamily(Map? m) {
+    if (m == null) return null;
+    try {
+      return FamilyInfo(
+        fatherName: m['fatherName'] as String? ?? '',
+        motherName: m['motherName'] as String? ?? '',
+        address: m['address'] as String? ?? '',
+      );
+    } catch (_) {
+      return null;
+    }
+  }
+
+  List<GalleryPhoto> _safeGallery(List? l) {
+    if (l == null) return [];
+    try {
+      return (l.cast<Map<String, dynamic>>())
+          .map((m) => GalleryPhoto(
+                url: m['url'] as String,
+                order: (m['order'] as int?) ?? 0,
+              ))
+          .toList();
+    } catch (_) {
+      return []; // Empty gallery is better than a crash
+    }
+  }
+
+  List<TimelineEvent> _safeTimeline(List? l) {
+    if (l == null) return [];
+    try {
+      return (l.cast<Map<String, dynamic>>())
+          .map((m) => TimelineEvent(
+                title: m['title'] as String? ?? '',
+                date: (m['date'] as DateTime?) ?? DateTime.now(),
+                description: m['description'] as String? ?? '',
+              ))
+          .toList();
+    } catch (_) {
+      return [];
+    }
+  }
+
   /// Falls back to placeholder text for any field the user hasn't
   /// filled in yet so the preview is still useful.
+  ///
+  /// This safely converts raw Maps from the wizard into typed objects before
+  /// passing them to the [Wedding] constructor. If conversion fails, we
+  /// return null or empty values so the preview always renders.
   Wedding _materialize(Map<String, dynamic> d) {
-    final m = <String, dynamic>{
-      'id': 'preview',
-      'userId': 'preview',
-      'slug': d['slug'] ?? 'your-wedding',
-      'groomName': d['groomName'] ?? 'Aarav',
-      'brideName': d['brideName'] ?? 'Diya',
-      'groomPhoto': d['groomPhoto'],
-      'bridePhoto': d['bridePhoto'],
-      'couplePhoto': d['couplePhoto'],
-      'weddingDate': d['weddingDate'] ?? DateTime.now().add(const Duration(days: 90)),
-      'weddingTime': d['weddingTime'] ?? '10:00 AM',
-      'venue': d['venue'],
-      'invitationMessage': d['invitationMessage'],
-      'coupleStory': d['coupleStory'],
-      'timeline': d['timeline'] ?? const [],
-      'galleryPhotos': d['galleryPhotos'] ?? const [],
-      'engagementPhotos': d['engagementPhotos'] ?? const [],
-      'brideFamily': d['brideFamily'],
-      'groomFamily': d['groomFamily'],
-      'templateId': templateId,
-      'isPublished': false,
-      'isDraft': true,
-      'isRsvpEnabled': true,
-    };
-    return Wedding.fromJson(m);
+    return Wedding(
+      id: 'preview',
+      userId: 'preview',
+      slug: (d['slug'] as String?) ?? 'your-wedding',
+      groomName: (d['groomName'] as String?) ?? 'Aarav',
+      brideName: (d['brideName'] as String?) ?? 'Diya',
+      groomPhoto: d['groomPhoto'] as String?,
+      bridePhoto: d['bridePhoto'] as String?,
+      couplePhoto: d['couplePhoto'] as String?,
+      weddingDate: (d['weddingDate'] as DateTime?) ??
+          DateTime.now().add(const Duration(days: 90)),
+      weddingTime: (d['weddingTime'] as String?) ?? '10:00 AM',
+      venue: _safeVenue(d['venue'] as Map?),
+      invitationMessage: d['invitationMessage'] as String?,
+      coupleStory: d['coupleStory'] as String?,
+      timeline: _safeTimeline(d['timeline'] as List?),
+      galleryPhotos: _safeGallery(d['galleryPhotos'] as List?),
+      engagementPhotos: _safeGallery(d['engagementPhotos'] as List?),
+      brideFamily: _safeFamily(d['brideFamily'] as Map?),
+      groomFamily: _safeFamily(d['groomFamily'] as Map?),
+      templateId: templateId,
+      isPublished: false,
+      isDraft: true,
+      isRsvpEnabled: true,
+    );
   }
 }
 

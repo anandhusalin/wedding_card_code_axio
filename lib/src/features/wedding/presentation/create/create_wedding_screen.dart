@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/config/app_config.dart';
+import '../../../../core/dev/dev_data_generator.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/responsive.dart';
@@ -34,6 +36,16 @@ class _CreateWeddingScreenState extends ConsumerState<CreateWeddingScreen> {
   ];
 
   bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // In dev builds, pre-fill the wizard with random data so engineers
+    // and QA can exercise the full 6-step flow without typing.
+    if (ref.read(appConfigProvider).enableDevPrefill) {
+      _weddingData.addAll(DevDataGenerator.randomWeddingWizardData());
+    }
+  }
 
   void _onStepContinue() async {
     // Prevent double-taps and avoid navigating while loading
@@ -167,6 +179,33 @@ class _CreateWeddingScreenState extends ConsumerState<CreateWeddingScreen> {
       body: Column(
         children: [
           // ─── Modern step indicator ───────────────────────
+          if (ref.watch(appConfigProvider).showDevBanner)
+            Container(
+              width: double.infinity,
+              color: Colors.amber.shade100,
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 6,
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.science_rounded,
+                    size: 16,
+                    color: Colors.amber.shade900,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    'DEV MODE — random data pre-filled',
+                    style: TextStyle(
+                      color: Colors.amber.shade900,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           Container(
             decoration: BoxDecoration(
               gradient: isDark

@@ -1,0 +1,15 @@
+# Dev flavor build configuration.
+#
+# To activate this xcconfig for a real iOS dev build you need to create
+# an Xcode scheme "Runner-Dev" (Product → Scheme → Manage Schemes → +)
+# and set its Build configuration to base off Dev.xcconfig. The default
+# `flutter create` project only has one Runner target, so `flutter run
+# --flavor dev` on iOS will fail with "no scheme found" until that
+# scheme is created.
+#
+# Once the scheme is set up, the .dev bundle identifier lets the dev
+# and prod builds coexist on the same device.
+#include "Generated.xcconfig"
+PRODUCT_BUNDLE_IDENTIFIER = com.weddingcards.wedding_cards.dev
+PRODUCT_NAME = Wedding Cards Dev
+APIPREFIX = http://localhost:3000

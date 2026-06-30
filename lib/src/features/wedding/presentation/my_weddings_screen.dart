@@ -6,7 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:pretty_qr_code/pretty_qr_code.dart';
 import 'package:share_plus/share_plus.dart';
 
-import '../../../core/constants/api_constants.dart';
+import '../../../core/config/app_config.dart';
 import '../../../core/utils/pdf_generator_service.dart';
 import '../../../core/utils/responsive.dart';
 import '../../../core/theme/app_colors.dart';
@@ -180,8 +180,9 @@ class WeddingCardWidget extends ConsumerWidget {
 
   const WeddingCardWidget({super.key, required this.wedding});
 
-  Future<void> _openPreview(BuildContext context) async {
-    final url = Uri.parse(ApiConstants.publicWeddingUrl(wedding.slug));
+  Future<void> _openPreview(BuildContext context, WidgetRef ref) async {
+    final config = ref.read(appConfigProvider);
+    final url = Uri.parse('${config.publicBaseUrl}/${wedding.slug}');
     if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -191,13 +192,15 @@ class WeddingCardWidget extends ConsumerWidget {
     }
   }
 
-  void _shareWedding(BuildContext context) {
-    final url = ApiConstants.publicWeddingUrl(wedding.slug);
+  void _shareWedding(BuildContext context, WidgetRef ref) {
+    final config = ref.read(appConfigProvider);
+    final url = '${config.publicBaseUrl}/${wedding.slug}';
     Share.share('Check out our wedding website! $url');
   }
 
-  void _showQrCode(BuildContext context) {
-    final url = ApiConstants.publicWeddingUrl(wedding.slug);
+  void _showQrCode(BuildContext context, WidgetRef ref) {
+    final config = ref.read(appConfigProvider);
+    final url = '${config.publicBaseUrl}/${wedding.slug}';
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -222,7 +225,7 @@ class WeddingCardWidget extends ConsumerWidget {
           FilledButton.icon(
             onPressed: () {
               Navigator.pop(context);
-              _shareWedding(context);
+              _shareWedding(context, ref);
             },
             icon: const Icon(Icons.share, size: 18),
             label: const Text('Share'),
@@ -240,7 +243,7 @@ class WeddingCardWidget extends ConsumerWidget {
       borderRadius: BorderRadius.circular(AppTheme.radiusXl),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
-        onTap: () => _openPreview(context),
+        onTap: () => _openPreview(context, ref),
         child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(AppTheme.radiusXl),
@@ -373,7 +376,7 @@ class WeddingCardWidget extends ConsumerWidget {
                         _MiniIconButton(
                           icon: Icons.public_rounded,
                           tooltip: 'Preview',
-                          onTap: () => _openPreview(context),
+                          onTap: () => _openPreview(context, ref),
                         ),
                         if (wedding.isRsvpEnabled)
                           _MiniIconButton(
@@ -385,12 +388,12 @@ class WeddingCardWidget extends ConsumerWidget {
                         _MiniIconButton(
                           icon: Icons.qr_code_rounded,
                           tooltip: 'QR Code',
-                          onTap: () => _showQrCode(context),
+                          onTap: () => _showQrCode(context, ref),
                         ),
                         _MiniIconButton(
                           icon: Icons.share_rounded,
                           tooltip: 'Share',
-                          onTap: () => _shareWedding(context),
+                          onTap: () => _shareWedding(context, ref),
                         ),
                         const Spacer(),
                         _MiniIconButton(
