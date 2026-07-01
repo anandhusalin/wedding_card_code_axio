@@ -57,6 +57,8 @@ Dio dio(Ref ref) {
   dio.interceptors.add(
     AuthInterceptor(
       secureStorage: storage,
+      dio: dio,
+      baseUrl: config.apiBaseUrl,
       onUnauthorized: () {
         // The interceptor can't await inside Dio's error chain. We use a
         // microtask so the storage clear (which is async) is queued up

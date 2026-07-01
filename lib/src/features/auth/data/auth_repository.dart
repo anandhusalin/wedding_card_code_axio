@@ -84,7 +84,8 @@ class AuthRepository {
   Future<User> _handleAuthResponse(dynamic data) async {
     final user = _parseUser(data);
     final token = data['data']['token'] as String;
-    await _persistSession(user, token);
+    final refreshToken = data['data']['refreshToken'] as String?;
+    await _persistSession(user, token, refreshToken);
     _authStateController.add(user);
     return user;
   }
@@ -94,9 +95,54 @@ class AuthRepository {
     return User.fromJson(userJson);
   }
 
-  Future<void> _persistSession(User user, String token) async {
+  Future<void> _persistSession(
+    User user,
+    String token,
+    String? refreshToken,
+  ) async {
     await _storage.write(key: AppConstants.tokenKey, value: token);
+    if (refreshToken != null && refreshToken.isNotEmpty) {
+      await _storage.write(key: AppConstants.refreshTokenKey, value: refreshToken);
+    }
     await _persistUser(user);
+  }
+
+  /// Exchanges a refresh token for a new access token.
+  /// Returns the new access token, or null if the refresh token is missing/invalid.
+  Future<String?> refreshToken() async {
+    final storedRefreshToken = await _storage.read(key: AppConstants.refreshTokenKey);
+    if (storedRefreshToken == null || storedRefreshToken.isEmpty) {
+      return null;
+    }
+
+    try {
+      final response = await _dio.post(
+        ApiConstants.refreshToken,
+        data: {'refreshToken': storedRefreshToken},
+      );
+      final newToken = response.data['data']['token'] as String?;
+      final newRefreshToken = response.data['data']['refreshToken'] as String?;
+
+      if (newToken != null) {
+        // Persist the new tokens
+        await _storage.write(key: AppConstants.tokenKey, value: newToken);
+        if (newRefreshToken != null && newRefreshToken.isNotEmpty) {
+          await _storage.write(
+            key: AppConstants.refreshTokenKey,
+            value: newRefreshToken,
+          );
+        }
+        return newToken;
+      }
+      return null;
+    } on DioException catch (e) {
+      // If refresh fails (e.g. refresh token expired), clear session
+      if (e.response?.statusCode == 401 || e.response?.statusCode == 403) {
+        await _clearSession();
+        _authStateController.add(null);
+      }
+      return null;
+    }
   }
 
   Future<void> _persistUser(User user) async {
